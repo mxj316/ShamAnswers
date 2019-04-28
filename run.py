@@ -49,7 +49,7 @@ def login()
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount()
 
-@app.route('/main', methods=['GET', 'POST'])
+@app.route('/main', methods=['GET', 'POST', 'remove'])
 def main()
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -58,7 +58,7 @@ def profile()
 @app.route('/updateaccount', methods=['GET', 'POST'])
 def update_account()
 
-@app.route('/deleteaccount', methods=['GET', 'POST'])
+@app.route('/deleteaccount', methods=['GET', 'POST', 'remove'])
 def delete_account()
 
 @app.route('/logout', methods=['GET', 'POST'])
