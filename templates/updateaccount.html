@@ -39,5 +39,38 @@
 
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
+
+
+            <div  class="container">
+
+                <h1 align="center">Change Email</h1>
+                <div class="row">
+
+                    <div class="col col-md-4">
+                    </div>
+
+                    <div class="col col-md-4">
+                        <hr>
+                        <form action="" method="get">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label >Old Email: {{ profile.email }}</label>
+                                </div>
+                            </fieldset>
+                        </form>
+                        <form action="" method="post">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label >New Email:</label>
+                                    <input name="new-email" type="email" class="form-control"/>
+                                </div>
+                            </fieldset>
+                            <input name="change-email-btn" type="submit" value="Submit" class="btn btn-secondary"/><hr/>
+                        </form>
+                    </div>
+                    <div class="col col-md-4">
+                    </div>
+                </div>
+            </div>
     </body>
 </html>
