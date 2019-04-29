@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Update Account</title>
+        <title>Update Username</title>
         <meta charset="utf-8">
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
@@ -43,7 +43,7 @@
 
             <div  class="container">
 
-                <h1 align="center">Change Email</h1>
+                <h1 align="center">Change Username</h1>
                 <div class="row">
 
                     <div class="col col-md-4">
@@ -54,18 +54,18 @@
                         <form action="" method="get">
                             <fieldset>
                                 <div class="form-group">
-                                    <label >Old Email: {{ profile.email }}</label>
+                                    <label >Old Username: {{ profile.username }}</label>
                                 </div>
                             </fieldset>
                         </form>
                         <form action="" method="post">
                             <fieldset>
                                 <div class="form-group">
-                                    <label >New Email:</label>
-                                    <input name="new-email" type="email" class="form-control"/>
+                                    <label >New Username:</label>
+                                    <input name="new-username" type="username" class="form-control"/>
                                 </div>
                             </fieldset>
-                            <input name="change-email-btn" type="submit" value="Submit" class="btn btn-secondary"/><hr/>
+                            <input name="change-username-btn" type="submit" value="Submit" class="btn btn-secondary"/><hr/>
                         </form>
                     </div>
                     <div class="col col-md-4">
