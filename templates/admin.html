@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login</title>
+        <title>Admin</title>
         <meta charset="utf-8">
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
@@ -38,5 +38,28 @@
                 </div>
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
+
+            <table class="table">
+                <thread>
+                    <tr>
+                        <th scope="col">Total Number of Users</th>
+                        <th scope="col">Total Number of Questions</th>
+                        <th scope="col">Total Number of Comments</th>
+                        <th scope="col">Total Number of Complete Answers</th>
+                        <th scope="col">Average Number of Questions Per User</th>
+                        <th scope="col">Average Number of Comments Per User</th>
+                    </tr>
+                </thread>
+                <tbody>
+                    <tr>
+                        <td>{{ totals.user }}</td>
+                        <td>{{ totals.question }}</td>
+                        <td>{{ totals.comment }}</td>
+                        <td>{{ totals.complete_comment}}</td>
+                        <td>{{ totals.avg_question}}</td>
+                        <td>{{ totals.avg_comment}}</td>
+                    </tr>
+                </tbody>
+            </table>
     </body>
 </html>
