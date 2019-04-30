@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash, ses
 import mysql.connector
 import datetime as datetime
 from User import User
+import os
 
 # Read configuration from file.
 config = configparser.ConfigParser()
@@ -10,7 +11,8 @@ config.read('config.ini')
 my_user = None  # will hold user id whene logged in
 # Set up application server.
 app = Flask(__name__)
-app.secret_key = 'my_key_is_set_here'
+app.config.update(**config['app'])
+app.secret_key = os.urandom(24)
 
 # Create a function for fetching data from the database.
 def sql_query(sql):
@@ -34,8 +36,12 @@ def sql_execute(sql):
 def admin():
     return render_template('admin.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
+    if "email" in request.form:
+        session['email'] = request.form["email"]
+        session['username'] = request.form["username"]
+        session['authorized'] = False 
     return render_template('createaccount.html')
 
 @app.route('/deleteaccount', methods=['GET', 'POST'])
@@ -48,15 +54,15 @@ def logout():
 
 @app.route('/posts', methods=['GET','POST'])
 def posts():
-    if request.method=="get"
-    #Get all questions from db
-    sql="select * from question"
-    data= sql_execute(sql)
-  return render_template('posts.html')
+    if request.method == "GET":
+        #Get all questions from db
+        sql="select * from question"
+        data= sql_execute(sql)
+    return render_template('posts.html')
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
-    if request.method == "post":
+    if request.method == "POST":
         # User creates a new question
         ques = request.form['text']
         # Define the user id
@@ -66,9 +72,9 @@ def main():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html')
+    return render_template('profile.html', profile = session)
 
-@app.route('/start', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def start():
     return render_template('start.html')
 

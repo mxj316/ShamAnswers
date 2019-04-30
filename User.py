@@ -1,19 +1,16 @@
 # User class, primarily used to deal with authorization to view admin page
 
 class User():
-    def __init__(self, id, email, authorized):
-        self.id = id
-        self.email = username
-        if authorized == 'admin':
-            self.authorized = True
-        else:
-            self.authorized = False
+    def __init__(self, email, username, authorized):
+        self.email = email
+        self.username = username
+        self.authorized = authorized
 
-    def set_id(self, id):
-        self.id = id
+    def set_username(self, username):
+        self.username = username 
 
-    def get_id(self):
-        return self.id
+    def get_username(self):
+        return self.username
 
     def set_email(self, email):
         self.email = email
