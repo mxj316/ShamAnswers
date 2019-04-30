@@ -32,21 +32,21 @@ def sql_execute(sql):
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    return render_template('admin.html', template_data=template_data)
+    return render_template('admin.html')
 
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
-    return render_template('createaccount.html', template_data=template_data)
+    return render_template('createaccount.html')
 
 @app.route('/deleteaccount', methods=['GET', 'POST'])
 def delete_account():
-    return render_template('deleteaccount.html', template_data=template_data)
+    return render_template('deleteaccount.html')
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    return render_template('logout.html', template_data=template_data)
+    return render_template('logout.html')
 
-@app.route('/main', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == "post":
         # User creates a new question
@@ -54,27 +54,27 @@ def main():
         # Define the user id
         sql = "insert into question(content, category, user_id) values(ques, {category}, {user_id})".format(category = ___, user_id = ___)
         sql_execute(sql)
-    return render_template('main.html', template_data=template_data)
+    return render_template('main.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html', template_data=template_data)
+    return render_template('profile.html')
 
 @app.route('/start', methods=['GET', 'POST'])
 def start():
-    return render_template('start.html', template_data=template_data)
+    return render_template('start.html')
 
 @app.route('/updateemail', methods=['GET', 'POST'])
 def update_email():
-    return render_template('updateemail.html', template_data=template_data)
+    return render_template('updateemail.html')
 
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
-    return render_template('updatepassword.html', template_data=template_data)
+    return render_template('updatepassword.html')
 
 @app.route('/updateusername', methods=['GET', 'POST'])
 def delete_username():
-    return render_template('updateusername.html', template_data=template_data)
+    return render_template('updateusername.html')
 
 if __name__ == '__main__':
     app.run(**config['app'])
