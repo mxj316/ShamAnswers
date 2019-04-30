@@ -34,7 +34,7 @@ def sql_execute(sql):
 def admin():
     return render_template('admin.html')
 
-@app.route('/createaccount', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def createaccount():
     return render_template('createaccount.html')
 
@@ -54,7 +54,7 @@ def posts():
     data= sql_execute(sql)
   return render_template('posts.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "post":
         # User creates a new question
