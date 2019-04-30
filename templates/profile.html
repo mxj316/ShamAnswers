@@ -11,6 +11,21 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
+        <style>
+
+            .font_control
+            {
+                background-color:#FFF;
+                padding:10px;
+            }
+
+            .control
+            {
+                color:#000;
+                margin:10px;
+            }
+
+        </style>
     </head>
     <body>
 
@@ -38,5 +53,16 @@
                 </div>
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
+
+            <div class="w-25 font_control">
+                <div class="label">Email: </div>
+                <p>{{ profile.email }}</p>
+                <div class="label">Username: </div>
+                <p>{{ profile.email }}</p>
+            </div>
+
+            <div class="w-75 font_control">
+
+            </div>
     </body>
 </html>
