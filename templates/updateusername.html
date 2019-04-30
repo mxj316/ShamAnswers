@@ -1,9 +1,7 @@
-<!-- This page allows users to create an account -->
-
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Create Account</title>
+        <title>Update Username</title>
         <meta charset="utf-8">
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
@@ -16,7 +14,7 @@
     </head>
     <body>
 
-    <!-- Creates the navigation bar, and references to respective pages-->
+            <!-- Creates the navigation bar, and references to respective pages-->
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65037E;">
                 <a class="navbar-brand" href="main">Sham Answers</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +26,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="profile">My Profile</a>
                         </li>
+                        {% if authorized %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin">Admin</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="logout">Logout</a>
                         </li>
@@ -37,46 +40,37 @@
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
-        <!-- Creates input windows for user's email and password -->
-        <div  class="container">
-            <br>
-            <h1 align="center">Sham Answers</h1>
-            <hr/>
 
-            <h2 align="center">Create an Account</h2>
+            <div  class="container">
 
-            <div class="row">
+                <h1 align="center">Change Username</h1>
+                <div class="row">
 
-                <div class="col col-md-4">
-                </div>
-                <div class="col col-md-4">
-                    <hr>
-                    <form action="" method="post">
-                        <fieldset>
-                            <div class="form-group">
-                                <label >Email</label>
-                                <input name="email" type="email" class="form-control"/>
-                            </div>
+                    <div class="col col-md-4">
+                    </div>
 
-                            <div class="form-group">
-                                <label >Username</label>
-                                <input name="username" type="username" class="form-control"/>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input name="password" type="password" class="form-control"/>
-                            </div>
-
-                        </fieldset>
-                        <input name="submit" type="submit" value="Submit" class="btn btn-secondary"/><hr/>
-                    </form>
-                </div>
-
-                <div class="col col-md-4">
+                    <div class="col col-md-4">
+                        <hr>
+                        <form action="" method="get">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label >Old Username: {{ profile.username }}</label>
+                                </div>
+                            </fieldset>
+                        </form>
+                        <form action="" method="post">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label >New Username:</label>
+                                    <input name="new-username" type="username" class="form-control"/>
+                                </div>
+                            </fieldset>
+                            <input name="change-username-btn" type="submit" value="Submit" class="btn btn-secondary"/><hr/>
+                        </form>
+                    </div>
+                    <div class="col col-md-4">
+                    </div>
                 </div>
             </div>
-
-        </div>
     </body>
 </html>
