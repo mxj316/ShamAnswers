@@ -23,6 +23,8 @@
                 color:#000;
                 margin:10px;
             }
+
+
         </style>
     </head>
     <body>
@@ -55,14 +57,30 @@
             </nav>
 
             <div class="w-25 font_control">
+                <h5>
+                    <div class="control">My Account Details</div>
+                </h5>
                 <div class="label">Email: </div>
                 <p>{{ profile.email }}</p>
                 <div class="label">Username: </div>
                 <p>{{ profile.username }}</p>
             </div>
 
-            <div class="w-75 font_control">
+                <h5>
+                    <div class="control">Settings</div>
+                </h5>
 
+                <div class="row font_control">
+                    <a class="btn btn-secondary" href="updateemail.html" role="button">Change Email</a>
+                </div>
+
+                <div class="row font_control">
+                    <a class="btn btn-secondary" href="updateusername.html" role="button">Change Username</a>
+                </div>
+
+                <div class="row font_control">
+                    <a class="btn btn-secondary" href="updatepassword.html" role="button">Change Password</a>
+                </div>
             </div>
     </body>
 </html>
