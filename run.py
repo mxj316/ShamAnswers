@@ -42,6 +42,7 @@ def createaccount():
         session['email'] = request.form["email"]
         session['username'] = request.form["username"]
         session['authorized'] = False 
+        return redirect(url_for('main'))
     return render_template('createaccount.html')
 
 @app.route('/deleteaccount', methods=['GET', 'POST'])
@@ -50,6 +51,15 @@ def delete_account():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
+    print(request.form)
+    if "returnhome" in request.form:
+        if request.form["returnhome"] == "Yes":
+            session.pop("username", None)
+            session.pop("email", None)
+            session.pop("authorized", None)
+            return redirect(url_for('start'))
+        if request.form["returnhome"] == "No":
+            return redirect(url_for('main'))
     return render_template('logout.html')
 
 @app.route('/posts', methods=['GET','POST'])
