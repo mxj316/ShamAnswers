@@ -34,7 +34,7 @@ def sql_execute(sql):
 def admin():
     return render_template('admin.html')
 
-@app.route('/createaccount', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def createaccount():
     return render_template('createaccount.html')
 
@@ -46,7 +46,15 @@ def delete_account():
 def logout():
     return render_template('logout.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/posts', methods=['GET','POST'])
+def posts():
+    if request.method=="get"
+    #Get all questions from db
+    sql="select * from question"
+    data= sql_execute(sql)
+  return render_template('posts.html')
+
+@app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "post":
         # User creates a new question
@@ -54,7 +62,7 @@ def main():
         # Define the user id
         sql = "insert into question(content, category, user_id) values(ques, {category}, {user_id})".format(category = ___, user_id = ___)
         sql_execute(sql)
-    return render_template('main.html')
+    return render_template('main.html') 
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
