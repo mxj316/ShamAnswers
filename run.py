@@ -55,8 +55,14 @@ def main()
 @app.route('/profile', methods=['GET', 'POST'])
 def profile()
 
-@app.route('/updateaccount', methods=['GET', 'POST'])
-def update_account()
+@app.route('/updateemail', methods=['GET', 'POST'])
+def update_email()
+
+@app.route('/updateusername', methods=['GET', 'POST'])
+def update_username()
+
+@app.route('/updatepassword', methods=['GET', 'POST'])
+def update_password()
 
 @app.route('/deleteaccount', methods=['GET', 'POST', 'remove'])
 def delete_account()
