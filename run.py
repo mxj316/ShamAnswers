@@ -56,20 +56,9 @@ def main():
         sql_execute(sql)
     return render_template('main.html', template_data=template_data)
 
-<<<<<<< HEAD
-@app.route('/updateemail', methods=['GET', 'POST'])
-def update_email()
-
-@app.route('/updateusername', methods=['GET', 'POST'])
-def update_username()
-
-@app.route('/updatepassword', methods=['GET', 'POST'])
-def update_password()
-=======
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     return render_template('profile.html', template_data=template_data)
->>>>>>> e373a81dea9abda7dcb07f1a515e2a8b37a30ce1
 
 @app.route('/start', methods=['GET', 'POST'])
 def start():
