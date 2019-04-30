@@ -36,6 +36,7 @@ def admin():
 
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
+    print(request.form)
     return render_template('createaccount.html')
 
 @app.route('/deleteaccount', methods=['GET', 'POST'])

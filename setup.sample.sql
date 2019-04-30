@@ -4,8 +4,8 @@
 
 -- create database and user, grant privileges to user
 create database sham_answers_database;
-create user 'team_4'@'localhost' identified by '7df9eb42';
-grant all on sham_answers_database.* to 'team_4'@'localhost';
+create user 'username'@'localhost' identified by 'password';
+grant all on sham_answers_database.* to 'username'@'localhost';
 flush privileges;
 
 -- select the database and create tables
