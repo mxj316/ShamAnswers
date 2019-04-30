@@ -4,7 +4,7 @@ class User():
     def __init__(self, id, email, authorized):
         self.id = id
         self.email = username
-        if authorized = 'admin':
+        if authorized == 'admin':
             self.authorized = True
         else:
             self.authorized = False
