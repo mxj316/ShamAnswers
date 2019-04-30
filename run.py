@@ -46,7 +46,7 @@ def delete_account():
 def logout():
     return render_template('logout.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "post":
         # User creates a new question
@@ -60,7 +60,7 @@ def main():
 def profile():
     return render_template('profile.html')
 
-@app.route('/start', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def start():
     return render_template('start.html')
 
