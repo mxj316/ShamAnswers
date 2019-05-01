@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html>
     <head>
         <title>Sham Answers</title>
@@ -11,6 +13,21 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
+        <style>
+            .font_control
+            {
+                background-color:#FFF;
+                padding:10px;
+            }
+
+            .control
+            {
+                color:#000;
+                margin:30px;
+            }
+
+
+        </style>
     </head>
     <body>
 
@@ -54,7 +71,7 @@
                             <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
                             <div class="input-group-append">
 
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Catagory</button>
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="catagories">Catagory</button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#">Option 1</a>
                                     <a class="dropdown-item" href="#">Option 2</a>
@@ -68,8 +85,8 @@
 
                 <form class="form-inline" method="post">
                     <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Sort Questions</label>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Alphabetically</option>
+                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="sorting">
+                        <option selected name=>Alphabetically</option>
                         <option value="1">By Date Posted</option>
                         <option value="2">By Author</option>
                         <option value="3">By Catagory</option>
@@ -82,7 +99,9 @@
                 <h1 align="center">   </h1>
                 <hr/>
 
-
             </div>
+
     </body>
+
+
 </html>
