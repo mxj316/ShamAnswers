@@ -74,8 +74,9 @@ def createaccount():
                 return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
             # Choose a password
             password = request.form["password"]
+            # TODO: Decide how a user becomes an admin, and where in code this is to be done!
             session['authorized'] = False
-            sql = "insert into user(username, email, password) values('{username}', '{email}', '{password}')".format(username = session['username'], email = session['email'], password = password)
+            sql = "insert into user(username, email, password, admin) values('{username}', '{email}', '{password}', {admin})".format(username = session['username'], email = session['email'], password = password, admin = 0)
             sql_execute(sql)
             return redirect(url_for('main'))
         else:
@@ -107,13 +108,7 @@ def logout():
             return redirect(url_for('main'))
     return render_template('logout.html')
 
-@app.route('/posts', methods=['GET','POST'])
-def posts():
-    # Get all posts
-    if request.method == "GET":
-        sql = "select * from question"
-        data = sql_execute(sql)
-    return render_template('posts.html')
+
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
@@ -124,72 +119,60 @@ def main():
             category = request.form['categories']
             sql = "select id from user where username = '{username}'".format(username = session['username'])
             user_id = sql_query(sql)
-            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
-            if "Post" in request.form:
+            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id[0][0])
+            if "submit" in request.form:
                 sql_execute(sql)
-                sql = """select u.username, q.content, q.category, q.time_stamp
+                sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                         from user u
-                        inner join question q on u.id = q.user_id
-                        inner join letter l on q.id = l.question_id"""
+                        inner join question q on u.id = q.user_id"""
                 questions = sql_query(sql)
                 # Render the data on the website
-                template_data = {}
-
         # User sorts questions alphabetically
-        elif request.form["sorting"] == "1" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "1":
+            sql = """select u.username, q.content,  q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.content"""
-            ord_abc = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by date posted / timestamp
-        elif request.form["sorting"] == "2" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "2":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.time_stamp"""
-            ord_time_stamp = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by author
-        elif request.form["sorting"] == "3" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "3":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by u.username"""
-            ord_author = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by categories
-        elif request.form["sorting"] == "4" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "4":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.category"""
-            ord_cats = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by number of comments, descending order
-        else:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "5":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
                     inner join letter l on q.id = l.question_id
                     group by u.username, q.content, q.category, q.time_stamp
                     order by count(l.alphabet_letter) desc"""
-            ord_num_comments = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
+        template_data = [];
+        for row in questions:
+            template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]}) 
+        print(template_data)
+        return render_template('main.html', posts=template_data)
 
     return render_template('main.html')
 
