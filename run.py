@@ -2,7 +2,6 @@ import configparser
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 import mysql.connector
 import datetime as datetime
-from User import User
 import os
 
 # Read configuration from file.
