@@ -108,13 +108,7 @@ def logout():
             return redirect(url_for('main'))
     return render_template('logout.html')
 
-@app.route('/posts', methods=['GET','POST'])
-def posts():
-    # Get all posts
-    if request.method == "GET":
-        sql = "select * from question"
-        data = sql_execute(sql)
-    return render_template('posts.html')
+
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
