@@ -16,7 +16,7 @@ app.secret_key = os.urandom(24)
 # Create a function for fetching data from the database.
 def sql_query(sql):
     db = mysql.connector.connect(**config['mysql.connector'])
-    cursor = db.cursor()
+    cursor = db.cursor(buffered = True)
     cursor.execute(sql)
     result = cursor.fetchall()
     cursor.close()
@@ -25,7 +25,7 @@ def sql_query(sql):
 
 def sql_execute(sql):
     db = mysql.connector.connect(**config['mysql.connector'])
-    cursor = db.cursor()
+    cursor = db.cursor(buffered = True)
     cursor.execute(sql)
     db.commit()
     cursor.close()
@@ -58,7 +58,7 @@ def createaccount():
         # Choose a password
         password = request.form["password"]
         session['authorized'] = False
-        sql = "insert into user(username, email, password) values({'username}', '{email}', '{password}')".format(username = session['username'], email = session['email'], password = password)
+        sql = "insert into user(username, email, password) values('{username}', '{email}', '{password}')".format(username = session['username'], email = session['email'], password = password)
         sql_execute(sql)
         return redirect(url_for('main'))
     return render_template('createaccount.html', template_error = "")
@@ -124,14 +124,14 @@ def update_email():
         new_email = request.form['new-email']
         sql = "select count(email) from user where email = '{email}'".format(email = new_email)
         count_email = sql_query(sql)
-        if count_email > 0:
+        if count_email[0][0] > 0:
             # Handle error if user inputs email that already exists in database
-            return render_template('updateemail.html', template_error = "Could not update email: email is already a part of another account")
+            return render_template('updateemail.html', template_error = "Could not update email: email is already a part of another account", profile = session)
         sql = "update user set email = '{new_email}'".format(new_email = new_email)
         sql_execute(sql)
         session['email'] = new_email
         return redirect(url_for('profile'))
-    return render_template('updateemail.html', template_error = "")
+    return render_template('updateemail.html', template_error = "", profile = session)
 
 # User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
@@ -144,7 +144,7 @@ def update_password():
         sql = "update user set password = '{new_password}'".format(new_password = new_password)
         sql_execute(sql)
         return redirect(url_for('profile'))
-    return render_template('updatepassword.html')
+    return render_template('updatepassword.html', profile = session)
 
 # User can update their username
 @app.route('/updateusername', methods=['GET', 'POST'])
@@ -156,14 +156,14 @@ def delete_username():
         new_username = request.form['new-username']
         sql = "select count(username) from user where username = '{username}'".format(username = new_username)
         count_usernames = sql_query(sql)
-        if count_usernames > 0:
+        if count_usernames[0][0] > 0:
             # Handle error if user inputs username that already exists in database
-            return render_template("updateusername.html", template_error = "Could not update username: username is already in use")
-        sql = "update user set_username = '{new_username}'".format(new_username = new_username)
+            return render_template("updateusername.html", template_error = "Could not update username: username is already in use", profile = session)
+        sql = "update user set username = '{new_username}'".format(new_username = new_username)
         sql_execute(sql)
         session['username'] = new_username
         return redirect(url_for('profile'))
-    return render_template('updateusername.html', template_error = "")
+    return render_template('updateusername.html', template_error = "", profile = session)
 
 if __name__ == '__main__':
     app.run(**config['app'])
