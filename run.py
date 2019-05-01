@@ -102,8 +102,8 @@ def main():
 
     if request.method =="GET":
         #Get all questions from db
-        sql="select content, category, username, alphabet_letter from question, letter,user where question.id = letter.question_id and question.user_id = user.id"
-        data= sql_execute(sql)
+        sql ="select content, category, username, alphabet_letter from question, letter,user where question.id = letter.question_id and question.user_id = user.id"
+        data = sql_execute(sql)
     return render_template('main.html') 
 
 
