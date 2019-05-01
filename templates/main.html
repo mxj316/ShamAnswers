@@ -13,16 +13,6 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
-        <!-- Utility script for displaying unique id #'s for question urls -->
-        <script>
-            var qString = {{ question['number'] }};
-            var pString = "";
-            pString += "post/" + qString;
-
-            function loaded(){
-                document.getElementById("post_page").innerHTML = pString;
-            }
-        </script>
     </head>
     <body>
 
@@ -108,6 +98,14 @@
                     </thead>
                     <tbody>
                     {% for question in posts %}
+                        <script>
+                            var qString = {{ question['number'] }};
+                            var pString = "";
+                            pString += "post/" + qString;
+                            function loaded(){
+                                document.getElementById("post_page").innerHTML = pString;
+                            }
+                        </script>
                         <tr>
                             <td>{{ question['category'] }}</td>
                             <td>{{ question['post'] }}</td>
@@ -115,12 +113,12 @@
                             <td>
                                 <form action="">
                                     <body onload = loaded()>
-                                    <input type="submit" name="view_post" class="btn btn-secondary" value="Answer" href="post_page">
+                                    <a class="btn btn-secondary"  href="post_page" role="button">Answer</a>
                                     </body>
                                 </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
 
                     </tbody>
                 </table>
