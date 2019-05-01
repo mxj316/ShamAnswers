@@ -93,20 +93,6 @@ def logout():
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "POST":
-<<<<<<< HEAD
-        # User creates a new question
-        question = request.form['text']
-        # Define the user id
-        sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = ___, user_id = ___)
-        sql_execute(sql)
-
-    if request.method =="GET":
-        #Get all questions from db
-        sql ="select content, category, username, alphabet_letter from question, letter,user where question.id = letter.question_id and question.user_id = user.id"
-        data = sql_execute(sql)
-    return render_template('main.html') 
-
-=======
         # User creates a new question and it posts
         if "text" in request.form:
             question = request.form['text']
@@ -180,7 +166,6 @@ def main():
             template_data = {}
 
     return render_template('main.html')
->>>>>>> 34183c0a61ebc9a561f740eb081897e13428fb4b
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
