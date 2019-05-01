@@ -7,7 +7,7 @@ class User():
         self.authorized = authorized
 
     def set_username(self, username):
-        self.username = username 
+        self.username = username
 
     def get_username(self):
         return self.username
