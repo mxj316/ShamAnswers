@@ -18,7 +18,7 @@
             var qString = {{ question['number'] }};
             var pString = "";
             pString += "post/" + qString;
-
+            
             function loaded(){
                 document.getElementById("post_page").innerHTML = pString;
             }
@@ -114,7 +114,6 @@
                                     <body onload = loaded()>
                                         <input type="submit" name="view_post" class="btn btn-secondary" value="Answer" href="post_page">
                                     </body>
-
                                 </form>
                                 </td>
                             </tr>
