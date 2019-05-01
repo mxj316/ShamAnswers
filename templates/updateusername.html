@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>My Profile</title>
+        <title>Update Username</title>
         <meta charset="utf-8">
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
@@ -11,21 +11,6 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
-        <style>
-            .font_control
-            {
-                background-color:#FFF;
-                padding:10px;
-            }
-
-            .control
-            {
-                color:#000;
-                margin:10px;
-            }
-
-
-        </style>
     </head>
     <body>
 
@@ -53,34 +38,44 @@
                         </li>
                     </ul>
                 </div>
+
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
-            <div class="w-25 font_control">
-                <h5>
-                    <div class="control">My Account Details</div>
-                </h5>
-                <div class="label">Email: </div>
-                <p>{{ profile.email }}</p>
-                <div class="label">Username: </div>
-                <p>{{ profile.username }}</p>
-            </div>
 
-                <h5>
-                    <div class="control">Settings</div>
-                </h5>
+            <div  class="container">
 
-                <div class="row font_control">
-                    <a class="btn btn-secondary" href="updateemail" role="button">Change Email</a>
+                <h1 align="center">Change Username</h1>
+                <div class="row">
+
+                    <div class="col col-md-4">
+                    </div>
+
+                    <div class="col col-md-4">
+                        <hr>
+                        <form action="" method="get">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label >Old Username: {{ profile.username }}</label>
+                                </div>
+                            </fieldset>
+                        </form>
+                        <form action="" method="post">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label >New Username:</label>
+                                    <input name="new-username" type="username" class="form-control"/>
+                                </div>
+                            </fieldset>
+                            <input name="change-username-btn" type="submit" value="Submit" class="btn btn-secondary"/><hr/>
+                        </form>
+                    </div>
+                    <div class="col col-md-4">
+                    </div>
                 </div>
-
-                <div class="row font_control">
-                    <a class="btn btn-secondary" href="updateusername" role="button">Change Username</a>
-                </div>
-
-                <div class="row font_control">
-                    <a class="btn btn-secondary" href="updatepassword" role="button">Change Password</a>
-                </div>
+	    	{% if template_error != ""  %}
+			<p style="color: red;">{{template_error}}</p>
+	    	{% endif %}
             </div>
     </body>
 </html>

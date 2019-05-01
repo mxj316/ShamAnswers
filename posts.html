@@ -1,7 +1,10 @@
+<!-- This is the post page for the website, which allows the users to see all posts -->
+<!-- or go to the page createaccount.html to create a new account.            -->
+
 <!DOCTYPE html>
 <html>
     <head>
-        <title>My Profile</title>
+        <title>Posts</title>
         <meta charset="utf-8">
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
@@ -10,22 +13,6 @@
         <link href="https://bootswatch.com/4/journal/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
-
-        <style>
-            .font_control
-            {
-                background-color:#FFF;
-                padding:10px;
-            }
-
-            .control
-            {
-                color:#000;
-                margin:10px;
-            }
-
-
-        </style>
     </head>
     <body>
 
@@ -41,13 +28,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="profile">My Profile</a>
                         </li>
-                        <script>
-                            {% if authorized %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="admin">Admin</a>
-                            </li>
-                            {% endif %}
-                        </script>
                         <li class="nav-item">
                             <a class="nav-link" href="logout">Logout</a>
                         </li>
@@ -56,30 +36,16 @@
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
-            <div class="w-25 font_control">
-                <h5>
-                    <div class="control">My Account Details</div>
-                </h5>
-                <div class="label">Email: </div>
-                <p>{{ profile.email }}</p>
-                <div class="label">Username: </div>
-                <p>{{ profile.username }}</p>
-            </div>
+            <!-- Creates input windows for user's posts and comments, as well  -->
+            <!-- as links to page to create an account                         -->
+            <div  class="container">
+                <br>
+                <h1 align="left">Questions</h1>
+                <hr/>
 
-                <h5>
-                    <div class="control">Settings</div>
-                </h5>
 
-                <div class="row font_control">
-                    <a class="btn btn-secondary" href="updateemail" role="button">Change Email</a>
-                </div>
 
-                <div class="row font_control">
-                    <a class="btn btn-secondary" href="updateusername" role="button">Change Username</a>
-                </div>
 
-                <div class="row font_control">
-                    <a class="btn btn-secondary" href="updatepassword" role="button">Change Password</a>
                 </div>
             </div>
     </body>
