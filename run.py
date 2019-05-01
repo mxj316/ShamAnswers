@@ -117,72 +117,67 @@ def main():
             category = request.form['categories']
             sql = "select id from user where username = '{username}'".format(username = session['username'])
             user_id = sql_query(sql)
-            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
-            if "Post" in request.form:
-                sql_execute(sql)
-                sql = """select u.username, q.content, q.category, q.time_stamp
+            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id[0][0])
+            if "submit" in request.form:
+                # sql_execute(sql)
+                db = mysql.connector.connect(**config['mysql.connector'])
+                cursor = db.cursor(buffered = True)
+                cursor.execute(sql, (question, category, user_id))
+                db.commit()
+                cursor.close()
+                db.close()
+                sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                         from user u
-                        inner join question q on u.id = q.user_id
-                        inner join letter l on q.id = l.question_id"""
+                        inner join question q on u.id = q.user_id"""
                 questions = sql_query(sql)
                 # Render the data on the website
-                template_data = {}
 
         # User sorts questions by date posted / timestamp
-        elif request.form["sorting"] == "1" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "1":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.time_stamp"""
-            ord_time_stamp = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions alphabetically
-        elif request.form["sorting"] == "2" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "2":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.content"""
-            ord_abc = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by author
-        elif request.form["sorting"] == "3" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "3":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by u.username"""
-            ord_author = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by categories
-        elif request.form["sorting"] == "4" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "4":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.category"""
-            ord_cats = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
 
         # User sorts questions by number of comments, descending order
-        else:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "5":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
                     inner join letter l on q.id = l.question_id
                     group by u.username, q.content, q.category, q.time_stamp
                     order by count(l.alphabet_letter) desc"""
-            ord_num_comments = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
+            questions = sql_query(sql)
+        template_data = [];
+        for row in questions:
+            template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]})
+        print(template_data)
+        return render_template('main.html', posts=template_data)
 
     return render_template('main.html')
 
@@ -217,7 +212,13 @@ def update_email():
             # Handle error if user inputs email that already exists in database
             return render_template('updateemail.html', template_error = "Could not update email: email is already a part of another account", profile = session)
         sql = "update user set email = '{new_email}' where email = '{old_email}'".format(new_email = new_email, old_email = session['email'])
-        sql_execute(sql)
+        db = mysql.connector.connect(**config['mysql.connector'])
+        cursor = db.cursor(buffered = True)
+        # Prevent SQL Injection
+        cursor.execute(sql, (new_email, old_email))
+        db.commit()
+        cursor.close()
+        db.close()
         session['email'] = new_email
         return redirect(url_for('profile'))
     return render_template('updateemail.html', template_error = "", profile = session)
@@ -232,7 +233,13 @@ def update_password():
             print(count)
             if count[0][0] == 1:
                 sql = "update user set password = '{new_password}' where password = '{old_password}'".format(new_password = request.form['new-password'], old_password = request.form['old-password'])
-                sql_execute(sql)
+                db = mysql.connector.connect(**config['mysql.connector'])
+                cursor = db.cursor(buffered = True)
+                # Prevent SQL Injection
+                cursor.execute(sql, (new_password, old_password))
+                db.commit()
+                cursor.close()
+                db.close()
                 return redirect(url_for('profile'))
             else:
                 return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
@@ -254,7 +261,13 @@ def delete_username():
             # Handle error if user inputs username that already exists in database
             return render_template("updateusername.html", template_error = "Could not update username: username is already in use", profile = session)
         sql = "update user set username = '{new_username}' where username = '{old_username}'".format(new_username = new_username, old_username = session['username'])
-        sql_execute(sql)
+        db = mysql.connector.connect(**config['mysql.connector'])
+        cursor = db.cursor(buffered = True)
+        # Prevent SQL Injection
+        cursor.execute(sql, (new_username, old_username))
+        db.commit()
+        cursor.close()
+        db.close()
         session['username'] = new_username
         return redirect(url_for('profile'))
     return render_template('updateusername.html', template_error = "", profile = session)
