@@ -116,7 +116,7 @@
                         <option value="2">Alphabetically</option>
                         <option value="3">By Author</option>
                         <option value="4">By Category</option>
-                        <option value="5">By Number of Comments</option>
+			<option value="5">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
                 </form>
@@ -133,14 +133,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                        {% for author, category, post, number in posts %}
+                        {% for question in posts %}
                             <tr>
-                                <td>{{ category }}</td>
-                                <td>{{ post }}</td>
-                                <td>{{ author }}</td>
+                                <td>{{ question['category'] }}</td>
+                                <td>{{ question['post'] }}</td>
+                                <td>{{ question['author'] }}</td>
                                 <td>
                                 <form action="">
-                                    <input type="submit" name="view_post" class="btn btn-secondary" value={{ number }}>
+                                    <input type="submit" name="view_post" class="btn btn-secondary" value={{ question['number'] }}>
                                 </form>
                                 </td>
                             </tr>

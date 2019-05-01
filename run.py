@@ -122,73 +122,57 @@ def main():
             sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id[0][0])
             if "submit" in request.form:
                 sql_execute(sql)
-                sql = """select u.username, q.content, q.category, q.time_stamp
+                sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                         from user u
-                        inner join question q on u.id = q.user_id
-                        inner join letter l on q.id = l.question_id"""
+                        inner join question q on u.id = q.user_id"""
                 questions = sql_query(sql)
                 # Render the data on the website
-                template_data = {}
         # User sorts questions alphabetically
-        elif request.form["sorting"] == "1" and "Sort" in request.form:
-            sql = """select u.username, q.category, q.time_stamp
+        elif request.form["sorting"] == "1":
+            sql = """select u.username, q.content,  q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.content"""
-            ord_abc = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
-            print(ord_abc)
+            questions = sql_query(sql)
 
         # User sorts questions by date posted / timestamp
-        elif request.form["sorting"] == "2" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "2":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.time_stamp"""
-            ord_time_stamp = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
-            print(ord_time)
+            questions = sql_query(sql)
 
         # User sorts questions by author
-        elif request.form["sorting"] == "3" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "3":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by u.username"""
-            ord_author = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
-            print(ord_author)
+            questions = sql_query(sql)
 
         # User sorts questions by categories
-        elif request.form["sorting"] == "4" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "4":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id
                     order by q.category"""
-            ord_cats = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
-            print(ord_cats)
+            questions = sql_query(sql)
 
         # User sorts questions by number of comments, descending order
-        else:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+        elif request.form["sorting"] == "5":
+            sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                     from user u
                     inner join question q on u.id = q.user_id
                     inner join letter l on q.id = l.question_id
                     group by u.username, q.content, q.category, q.time_stamp
                     order by count(l.alphabet_letter) desc"""
-            ord_num_comments = sql_query(sql)
-            # Render the data on the website
-            template_data = {}
-            print(ord_num_comments)
+            questions = sql_query(sql)
+        template_data = [];
+        for row in questions:
+            template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]}) 
+        print(template_data)
+        return render_template('main.html', posts=template_data)
 
     return render_template('main.html')
 
