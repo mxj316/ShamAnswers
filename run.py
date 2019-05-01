@@ -33,6 +33,22 @@ def sql_execute(sql):
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    sql = "select count(id) from user where username = '{username}' and admin is true".format(username = session['username'])
+    admin_user = sql_query(sql)
+    if admin_user[0][0] > 0:
+    # if session['authorized'] == True:
+        tot_users = "select count(id) from user"
+        tot_questions = "select count(id) from question"
+        tot_comments = "select count(id) from letter"
+        comp_answers = "select count(id) from letter where votes > 5"
+        avg_questions = "select avg(n) from(select count(q.id) as n from user u inner join question q on u.id=q.user_id group by u.id) as avg_questions"
+        avg_comments = " select avg(n) from(select count(l.id) as n from user u inner join letter l on u.id=l.user_id group by u.id) as avg_comments"
+
+        # Render these queries onto webpage
+
+    else:
+        return render_template('admin.html', template_error = "You are trying to access information that requires administrative privileges. Please contact an admin for more informatiion")
+        return redirect(url_for('main'))
     return render_template('admin.html')
 
 # User can create an account
@@ -109,17 +125,18 @@ def main():
             sql = "select id from user where username = '{username}'".format(username = session['username'])
             user_id = sql_query(sql)
             sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
-            sql_execute(sql)
-            template_data = {}
-            sql = """select u.username, q.content, q.category, q.time_stamp
-                    from user u
-                    inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id"""
-            questions = sql_query(sql)
-            # Render the data on the website
+            if "Post" in request.form:
+                sql_execute(sql)
+                sql = """select u.username, q.content, q.category, q.time_stamp
+                        from user u
+                        inner join question q on u.id = q.user_id
+                        inner join letter l on q.id = l.question_id"""
+                questions = sql_query(sql)
+                # Render the data on the website
+                template_data = {}
 
         # User sorts questions alphabetically
-        elif request.form['categories'] == "Alphabetically":
+        elif request.form["sorting"] == "1" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -130,7 +147,7 @@ def main():
             template_data = {}
 
         # User sorts questions by date posted / timestamp
-        elif request.form['categories'] == "By Date Posted":
+        elif request.form["sorting"] == "2" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -141,7 +158,7 @@ def main():
             template_data = {}
 
         # User sorts questions by author
-        elif request.form['categories'] == "By Author":
+        elif request.form["sorting"] == "3" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -152,7 +169,7 @@ def main():
             template_data = {}
 
         # User sorts questions by categories
-        elif request.form['categories'] == "By Category":
+        elif request.form["sorting"] == "4" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id

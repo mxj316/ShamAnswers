@@ -52,17 +52,6 @@
                 color:#dd4b39;
                 margin-left:7px;
                 float: left;
-        <style>
-            .font_control
-            {
-                background-color:#FFF;
-                padding:10px;
-            }
-            .control
-            {
-                color:#000;
-                margin:30px;
-            }
         </style>
     </head>
     <body>
@@ -109,9 +98,11 @@
 
                                 <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="categories">Category</button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Option 1</a>
-                                    <a class="dropdown-item" href="#">Option 2</a>
-                                    <a class="dropdown-item" href="#">Option 3</a>
+                                    <a class="dropdown-item" href="#">Humor</a>
+                                    <a class="dropdown-item" href="#">Advice</a>
+                                    <a class="dropdown-item" href="#">Dating</a>
+                                    <a class="dropdown-item" href="#">Sports </a>
+                                    <a class="dropdown-item" href="#">School</a>
                                 </div>
                                 <button type="button" class="btn btn-secondary">Post</button>
                             </div>
@@ -172,8 +163,44 @@
                 </div>
 
             </div>
+            <div  class="container">
+               <br>
+               <h1 align="left">Questions!</h1>
+               <hr/>
+               <!-- Dynamically added posts -->
+                          <div class="container">
+                              <div class="col-md-12">
+                                  <!-- Horizontal Form -->
+                                  <div class="panel panel-success">
+                                      <div class="panel-header with-border">
+                                          <h2 class="panel-title text-center">Add Question</h2>
+                                      </div>
+                                      <!-- /.panel-header -->
+                                      <!-- form start -->
+                                      <form class="form-horizontal">
+                                          <div class="panel-body">
 
-    </body>
+                                              <div class="panel-group" id="accordion" role="tablist"
+                                                   aria-multiselectable="true">
+                                              </div>
+
+                                              <div class="col-md-12 text-center" style="margin-top:15px;">
+                                                  <button class="btn btn-success" id="addButton" value=""><span class="glyphicon glyphicon-plus"></span> Add New Field</button>
+                                              </div>
+
+
+                                          </div>
+                                          <!-- /.panel-body -->
+                                          <div class="panel-footer">
+                                              <div class="col-sm-offset-3 col-sm-6 text-center">
+
+                                              </div>
+
+                                          </div>
+                                          <!-- /.box-footer -->
+                                      </form>
+                                  </div>
+                              </div>
 
     <!-- JS for generating html for the dynamically allocated posts -->
     <script>
