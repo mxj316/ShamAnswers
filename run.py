@@ -112,7 +112,16 @@ def profile():
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
-    return render_template('start.html')
+    if request.method == "POST":
+        sql = "select username, email from user where user.email='{email}' and user.password='{password}'".format(email = request.form['email'], password = request.form['password'])
+        result = sql_query(sql)
+        if len(result) == 1:
+            session['username'] = result[0][0]
+            session['email'] = result[0][1]
+            return redirect(url_for('main'))
+        else:
+            return render_template('start.html', template_error="Could not login: incorrect username or password")
+    return render_template('start.html', template_error="")
 
 # User can update their email
 @app.route('/updateemail', methods=['GET', 'POST'])
