@@ -106,17 +106,18 @@ def main():
             sql = "select id from user where username = '{username}'".format(username = session['username'])
             user_id = sql_query(sql)
             sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
-            sql_execute(sql)
-            template_data = {}
-            sql = """select u.username, q.content, q.category, q.time_stamp
-                    from user u
-                    inner join question q on u.id = q.user_id
-                    inner join letter l on q.id = l.question_id"""
-            questions = sql_query(sql)
-            # Render the data on the website
+            if "Post" in request.form:
+                sql_execute(sql)
+                template_data = {}
+                sql = """select u.username, q.content, q.category, q.time_stamp
+                        from user u
+                        inner join question q on u.id = q.user_id
+                        inner join letter l on q.id = l.question_id"""
+                questions = sql_query(sql)
+                # Render the data on the website
 
         # User sorts questions alphabetically
-        elif request.form['categories'] == "Alphabetically":
+        elif request.form["sorting"] == "1" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -127,7 +128,7 @@ def main():
             template_data = {}
 
         # User sorts questions by date posted / timestamp
-        elif request.form['categories'] == "By Date Posted":
+        elif request.form["sorting"] == "2" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -138,7 +139,7 @@ def main():
             template_data = {}
 
         # User sorts questions by author
-        elif request.form['categories'] == "By Author":
+        elif request.form["sorting"] == "3" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -149,7 +150,7 @@ def main():
             template_data = {}
 
         # User sorts questions by categories
-        elif request.form['categories'] == "By Category":
+        elif request.form["sorting"] == "4" and "Sort" in request.form":
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -212,15 +213,17 @@ def update_email():
 # User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
-    if request.method == "GET":
-        sql = "select password from user where password = '{password}'".format(password = session['password'])
-        sql_execute(sql)
     if request.method == "POST":
-        new_password = request.form['new-password']
-        sql = "update user set password = '{new_password}'".format(new_password = new_password)
-        sql_execute(sql)
-        return redirect(url_for('profile'))
-    return render_template('updatepassword.html', profile = session)
+        sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
+        count = sql_query(sql)
+        print(count)
+        if count[0][0] == 1:
+            sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
+            sql_execute(sql)
+            return redirect(url_for('profile'))
+        else:
+            return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
+    return render_template('updatepassword.html', template_error = "")
 
 # User can update their username
 @app.route('/updateusername', methods=['GET', 'POST'])
