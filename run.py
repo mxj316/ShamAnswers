@@ -100,7 +100,7 @@ def main():
         sql = "insert into question(content, category, user_id) values({question}, {category}, {user_id})".format(question = question, category = ___, user_id = ___)
         sql_execute(sql)
 
-    if request.method=="GET"
+    if request.method =="GET":
         #Get all questions from db
         sql="select * from question"
         data= sql_execute(sql)
