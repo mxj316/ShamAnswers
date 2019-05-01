@@ -21,7 +21,7 @@
 
             #accordion .panel-title>a {
                 display: block;
-                padding: 0.4em 0.6em;
+                padding: 0.6em 0.8em;
                 outline: none;
                 font-weight: bold;
                 text-decoration: none;
@@ -40,7 +40,7 @@
                 content: "\e114";
             }
             #accordion.panel-group .panel{
-                margin-top: 5px;
+                margin-top: 10px;
             }
             #accordion .actions_div > a {
                 font-size: 14px;
@@ -98,7 +98,7 @@
                             <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
                             <div class="input-group-append">
 
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="catagories">Catagory</button>
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="categories">Category</button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#">Option 1</a>
                                     <a class="dropdown-item" href="#">Option 2</a>
@@ -116,7 +116,7 @@
                         <option selected name=>Alphabetically</option>
                         <option value="1">By Date Posted</option>
                         <option value="2">By Author</option>
-                        <option value="3">By Catagory</option>
+                        <option value="3">By Category</option>
                         <option value="4">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
@@ -191,7 +191,6 @@
                         '<a class="'+collapsedClass+'" id="panel-lebel'+ counter +'" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+ counter +'" ' +
                         'aria-expanded="'+ariaExpanded+'" aria-controls="collapse'+ counter +'"> '+catgName+' </a><div class="actions_div" style="position: relative; top: -26px;">' +
                         '<a href="#" accesskey="'+ counter +'" class="remove_ctg_panel exit-btn pull-right"><span class="glyphicon glyphicon-remove"></span></a>' +
-                        '<a href="#" accesskey="'+ counter +'" class="edit_ctg_label pull-right"><span class="glyphicon glyphicon-edit "></span> Edit</a>' +
                         '<a href="#" accesskey="'+ counter +'" class="pull-right" id="addButton2"> <span class="glyphicon glyphicon-plus"></span> Add child category</a></div></h4></div>' +
                         '<div id="collapse'+ counter +'" class="panel-collapse collapse '+expandedClass+'"role="tabpanel" aria-labelledby="heading'+ counter +'">'+
                         '<div class="panel-body"><div id="TextBoxDiv'+ counter +'"></div><a class="btn btn-xs btn-primary" accesskey="'+ counter +'" id="addButton3" ><span class="glyphicon glyphicon-plus"></span> Add New Attributes</a>' +
@@ -220,7 +219,6 @@
                         '<a class="'+collapsedClass+'" id="panel-lebel'+ counter +'" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+ counter+'" ' +
                         'aria-expanded="'+ariaExpanded+'" aria-controls="collapse'+ counter+'"> '+catgName+' </a><div class="actions_div" style="position: relative; top: -26px;">' +
                         '<a href="#" accesskey="'+counter +'" class="remove_ctg_panel exit-btn pull-right"><span class="glyphicon glyphicon-remove"></span></a>' +
-                        '<a href="#" accesskey="'+ counter +'" class="edit_ctg_label pull-right"><span class="glyphicon glyphicon-edit"></span> Edit</a>' +
                         '<a href="#" accesskey="'+ counter +'" class="pull-right" id="addButton2"> <span class="glyphicon glyphicon-plus"></span> Add child category</a></h4></div>' +
                         '<div id="collapse'+ counter+'" class="panel-collapse collapse '+expandedClass+'"role="tabpanel" aria-labelledby="heading'+counter+'">'+
                         '<div class="panel-body"><div id="TextBoxDiv'+ counter +'"></div><a class="btn btn-xs btn-primary" accesskey="'+ counter +'" id="addButton3" ><span class="glyphicon glyphicon-plus"></span> Add New Attributes</a>' +
@@ -241,8 +239,6 @@
             });
 
 
-
-
             var y = 1;
             $(wrapper).on("click","#addButton3", function(e){
                 e.preventDefault();
@@ -256,19 +252,6 @@
                 e.preventDefault();
                 $(this).parent('div').remove();y--;
             })
-
-            $(wrapper).on("click",".edit_ctg_label", function(e){
-                var panelId = $(this).attr('accesskey');
-                var catgName = prompt("Please Change your category name");
-                if(catgName == ''){
-                    return false;
-                }
-                if(catgName != null){
-                    $('#panel'+panelId).find("#panel-lebel"+panelId).html('').html(catgName);
-                }
-
-
-            });
         });
     </script>
 
