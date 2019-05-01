@@ -39,28 +39,31 @@ def admin():
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if "email" in request.form:
-        # Choose an email address, and check if it already exists in the database
-        session['email'] = request.form["email"]
-        sql = "select count(email) from user where email = '{user_email}'".format(user_email = session['email'])
-        count_email = sql_query(sql)
-        if count_email[0][0] > 0:
-            # Handle error if user inputs email that already exists in database
-            session.pop("email")
-            return render_template('createaccount.html', template_error = "Could not create account: email is part of another account")
-        # Choose username, and check if it already exists in the database
-        session['username'] = request.form["username"]
-        sql = "select count(username) from user where username = '{username}'".format(username = session['username'])
-        count_usernames = sql_query(sql)
-        if count_usernames[0][0] > 0:
-            # Handle error if user inputs username that already exists in database
-            session.pop("username")
-            return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
-        # Choose a password
-        password = request.form["password"]
-        session['authorized'] = False
-        sql = "insert into user(username, email, password) values('{username}', '{email}', '{password}')".format(username = session['username'], email = session['email'], password = password)
-        sql_execute(sql)
-        return redirect(url_for('main'))
+        if request.form['password'] == request.form['retype-password']:
+            # Choose an email address, and check if it already exists in the database
+            session['email'] = request.form["email"]
+            sql = "select count(email) from user where email = '{user_email}'".format(user_email = session['email'])
+            count_email = sql_query(sql)
+            if count_email[0][0] > 0:
+                # Handle error if user inputs email that already exists in database
+                session.pop("email")
+                return render_template('createaccount.html', template_error = "Could not create account: email is part of another account")
+            # Choose username, and check if it already exists in the database
+            session['username'] = request.form["username"]
+            sql = "select count(username) from user where username = '{username}'".format(username = session['username'])
+            count_usernames = sql_query(sql)
+            if count_usernames[0][0] > 0:
+                # Handle error if user inputs username that already exists in database
+                session.pop("username")
+                return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
+            # Choose a password
+            password = request.form["password"]
+            session['authorized'] = False
+            sql = "insert into user(username, email, password) values('{username}', '{email}', '{password}')".format(username = session['username'], email = session['email'], password = password)
+            sql_execute(sql)
+            return redirect(url_for('main'))
+        else:
+            return render_template('createaccount.html', template_error = "Could not create account: password fields do not match")
     return render_template('createaccount.html', template_error = "")
 
 # User can delete an account
@@ -213,15 +216,18 @@ def update_email():
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
     if request.method == "POST":
-        sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
-        count = sql_query(sql)
-        print(count)
-        if count[0][0] == 1:
-            sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
-            sql_execute(sql)
-            return redirect(url_for('profile'))
+        if request.form['new-password'] == request.form['retype-new-password']:
+            sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
+            count = sql_query(sql)
+            print(count)
+            if count[0][0] == 1:
+                sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
+                sql_execute(sql)
+                return redirect(url_for('profile'))
+            else:
+                return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
         else:
-            return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
+            return render_template('updatepassword.html', template_error = "Could not change password: New password fields do not match")
     return render_template('updatepassword.html', template_error = "")
 
 # User can update their username
