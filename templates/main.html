@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html>
     <head>
         <title>Sham Answers</title>
@@ -11,9 +13,57 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
-    </head>
-    <body>
-
+        <!-- Style for accordion posts-->
+       <style>
+           #accordion .panel-heading {
+               padding: 0;
+           }
+           #accordion .panel-title>a {
+               display: block;
+               padding: 0.6em 0.8em;
+               outline: none;
+               font-weight: bold;
+               text-decoration: none;
+           }
+           #accordion .panel-title>a.accordion-toggle::before, #accordion a[data-toggle="collapse"]::before
+           {
+               content: "\e113";
+               float: left;
+               font-family: 'Glyphicons Halflings';
+               margin-right: 1em;
+           }
+           #accordion .panel-title>a.accordion-toggle.collapsed::before, #accordion a.collapsed[data-toggle="collapse"]::before
+           {
+               content: "\e114";
+           }
+           #accordion.panel-group .panel{
+               margin-top: 10px;
+           }
+           #accordion .actions_div > a {
+               font-size: 14px;
+               margin-right: 15px;
+           }
+           #accordion .actions_div > a.exit-btn {
+               color:#dd4b39;
+           }
+           #accordion .remove_field.exit-btn{
+               color:#dd4b39;
+               margin-left:7px;
+               float: left;
+       <style>
+           .font_control
+           {
+               background-color:#FFF;
+               padding:10px;
+           }
+           .control
+           {
+               color:#000;
+               margin:30px;
+           }
+       </style>
+   </head>
+   <body>
             <!-- Creates the navigation bar, and references to respective pages-->
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65037E;">
                 <a class="navbar-brand" href="/main">Sham Answers</a>
@@ -50,10 +100,17 @@
                 </form>
                 <form action="form" method="post">
                     <fieldset>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="What's your question?" aria-label="What's your question?" aria-describedby="basic-addon2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
                             <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button">Ask!</button>
+
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="categories">Category</button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Option 1</a>
+                                    <a class="dropdown-item" href="#">Option 2</a>
+                                    <a class="dropdown-item" href="#">Option 3</a>
+                                </div>
+                                <button type="button" class="btn btn-secondary">Post</button>
                             </div>
                         </div>
                     </fieldset>
@@ -61,11 +118,12 @@
 
                 <form class="form-inline" method="post">
                     <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Sort Questions</label>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Alphabetically</option>
-                        <option value="1">By Date Posted</option>
-                        <option value="2">By Author</option>
-                        <option value="3">By Number of Comments</option>
+                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="sorting">
+                        <option value="1"selected name=>Alphabetically</option>
+                        <option value="2">By Date Posted</option>
+                        <option value="3">By Author</option>
+                        <option value="4">By Category</option>
+                        <option value="5">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
                 </form>
@@ -79,12 +137,128 @@
                <br>
                <h1 align="left">Questions!</h1>
                <hr/>
+               <!-- Dynamically added posts -->
+                          <div class="container">
+                              <div class="col-md-12">
+                                  <!-- Horizontal Form -->
+                                  <div class="panel panel-success">
+                                      <div class="panel-header with-border">
+                                          <h2 class="panel-title text-center">Add Category</h2>
+                                      </div>
+                                      <!-- /.panel-header -->
+                                      <!-- form start -->
+                                      <form class="form-horizontal">
+                                          <div class="panel-body">
 
-            
+                                              <div class="panel-group" id="accordion" role="tablist"
+                                                   aria-multiselectable="true">
+                                              </div>
+
+                                              <div class="col-md-12 text-center" style="margin-top:15px;">
+                                                  <button class="btn btn-success" id="addButton" value=""><span class="glyphicon glyphicon-plus"></span> Add New Field</button>
+                                              </div>
+
+
+                                          </div>
+                                          <!-- /.panel-body -->
+                                          <div class="panel-footer">
+                                              <div class="col-sm-offset-3 col-sm-6 text-center">
+
+                                              </div>
+
+                                          </div>
+                                          <!-- /.box-footer -->
+                                      </form>
+                                  </div>
+                              </div>
+
+                          </div>
+
+                  </body>
+
 
 
 
 
            </div>
     </body>
+
+    <!-- JS for generating html for the dynamically allocated posts -->
+        <script>
+            $(document).ready(function(){
+                var counter = 1;
+                var wrapper = $("#accordion");
+                $("#addButton").on("click", function(e){
+                    e.preventDefault();
+                    var catgName = prompt("Please Add your category name");
+                    if(catgName == ''){
+                        catgName = 'Catg#'+counter;
+                    }
+                    if(catgName != null){
+                        var ariaExpanded = false;
+                        var expandedClass = '';
+                        var collapsedClass = 'collapsed';
+                        if(counter==1){
+                            ariaExpanded = true;
+                            expandedClass = 'in';
+                            collapsedClass = '';
+                        }
+                        $(wrapper).append('<div class="col-sm-12" style="margin-bottom: 0;"><div class="panel panel-default" id="panel'+ counter +'">' +
+                            '<div class="panel-heading" role="tab" id="heading'+ counter +'"><h4 class="panel-title">' +
+                            '<a class="'+collapsedClass+'" id="panel-lebel'+ counter +'" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+ counter +'" ' +
+                            'aria-expanded="'+ariaExpanded+'" aria-controls="collapse'+ counter +'"> '+catgName+' </a><div class="actions_div" style="position: relative; top: -26px;">' +
+                            '<a href="#" accesskey="'+ counter +'" class="remove_ctg_panel exit-btn pull-right"><span class="glyphicon glyphicon-remove"></span></a>' +
+                            '<a href="#" accesskey="'+ counter +'" class="pull-right" id="addButton2"> <span class="glyphicon glyphicon-plus"></span> Add child category</a></div></h4></div>' +
+                            '<div id="collapse'+ counter +'" class="panel-collapse collapse '+expandedClass+'"role="tabpanel" aria-labelledby="heading'+ counter +'">'+
+                            '<div class="panel-body"><div id="TextBoxDiv'+ counter +'"></div><a class="btn btn-xs btn-primary" accesskey="'+ counter +'" id="addButton3" ><span class="glyphicon glyphicon-plus"></span> Add New Attributes</a>' +
+                            '<a class="btn btn-xs btn-success" accesskey="'+ counter +'" id="ajax_submit_button" >Done</a></div></div></div></div>');
+                        counter++;
+                    }
+                });
+                var x = 1;
+                $(wrapper).on("click","#addButton2", function(e){
+                    e.preventDefault();
+                    var parentId = $(this).attr('accesskey');
+                    var parentPanel = '#panel'+ parentId;
+                    var catgName = prompt("Please Add your category name");
+                    if(catgName == ''){
+                        catgName = ' P#'+parentId+' Catg#'+counter;
+                    }
+                    if(catgName != null){
+                        var ariaExpanded = false;
+                        var expandedClass = '';
+                        var collapsedClass = 'collapsed';
+                        $(wrapper).find(parentPanel).append('<div class="col-sm-12" style="margin-bottom: 0;"><div class="panel panel-default" id="panel'+counter+'">' +
+                            '<div class="panel-heading" role="tab" id="heading'+counter+'"><h4 class="panel-title">' +
+                            '<a class="'+collapsedClass+'" id="panel-lebel'+ counter +'" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+ counter+'" ' +
+                            'aria-expanded="'+ariaExpanded+'" aria-controls="collapse'+ counter+'"> '+catgName+' </a><div class="actions_div" style="position: relative; top: -26px;">' +
+                            '<a href="#" accesskey="'+counter +'" class="remove_ctg_panel exit-btn pull-right"><span class="glyphicon glyphicon-remove"></span></a>' +
+                            '<a href="#" accesskey="'+ counter +'" class="pull-right" id="addButton2"> <span class="glyphicon glyphicon-plus"></span> Add child category</a></h4></div>' +
+                            '<div id="collapse'+ counter+'" class="panel-collapse collapse '+expandedClass+'"role="tabpanel" aria-labelledby="heading'+counter+'">'+
+                            '<div class="panel-body"><div id="TextBoxDiv'+ counter +'"></div><a class="btn btn-xs btn-primary" accesskey="'+ counter +'" id="addButton3" ><span class="glyphicon glyphicon-plus"></span> Add New Attributes</a>' +
+                            '<a class="btn btn-xs btn-success" accesskey="'+ counter +'" id="ajax_submit_button" >Done</a></div></div></div></div>');
+                        x++;
+                        counter++;
+                    }
+                });
+                $(wrapper).on("click",".remove_ctg_panel", function(e){
+                    e.preventDefault();
+                    var accesskey = $(this).attr('accesskey');
+                    $('#panel'+accesskey).remove();
+                    counter--;
+                    x--;
+                });
+                var y = 1;
+                $(wrapper).on("click","#addButton3", function(e){
+                    e.preventDefault();
+                    var accesskey = $(this).attr('accesskey');
+                    y++;
+                    $('#panel'+accesskey).find('#TextBoxDiv'+accesskey).append('<div class="col-md-12 form-group"><input type="text" name="ctgtext[]" class="form-control" style="width: 40%;float: left;"/><a href="#" class="remove_field exit-btn"><span class="glyphicon glyphicon-remove"></a></div>');
+                });
+                $(wrapper).on("click",".remove_field", function(e){
+                    e.preventDefault();
+                    $(this).parent('div').remove();y--;
+                })
+            });
+        </script>
 </html>
