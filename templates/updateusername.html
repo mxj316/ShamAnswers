@@ -73,6 +73,9 @@
                     <div class="col col-md-4">
                     </div>
                 </div>
+	    	{% if template_error != ""  %}
+			<p style="color: red;">{{template_error}}</p>
+	    	{% endif %}
             </div>
     </body>
 </html>
