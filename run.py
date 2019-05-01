@@ -36,17 +36,42 @@ def sql_execute(sql):
 def admin():
     return render_template('admin.html')
 
+# User can create an account
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if "email" in request.form:
+        # Choose an email address, and check if it already exists in the database
         session['email'] = request.form["email"]
+        sql = "select count(email) from user where email = {email}".format(email = session['email'])
+        count_email = sql_query(sql)
+        if count_email > 0:
+            # Handle error if user inputs email that already exists in database
+
+        # Choose username, and check if it already exists in the database
         session['username'] = request.form["username"]
-        session['authorized'] = False 
+        sql = "select count(username) from user where username = {username}".format(username = session['username'])
+        count_usernames = sql_query(sql)
+        if count_usernames > 0:
+            # Handle error if user inputs username that already exists in database
+
+        # Choose a password
+        password = request.form["password"]
+        session['authorized'] = False
+        sql = "insert into user(username, email, password) values({username}, {email}, {password})".format(username = session['username'], email = session['email'], password = password)
+        sql_execute(sql)
         return redirect(url_for('main'))
     return render_template('createaccount.html')
 
+# User can delete an account
 @app.route('/deleteaccount', methods=['GET', 'POST'])
 def delete_account():
+    if request.method == "POST":
+        if "Yes" in request.form:
+            sql = "delete * from user where id = {user_id}".format(user_id = ___)
+            sql_execute(sql)
+            return redirect(url_for('start'))
+        if "No" in request.form:
+            return redirect(url_for('main'))
     return render_template('deleteaccount.html')
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -64,21 +89,21 @@ def logout():
 
 @app.route('/posts', methods=['GET','POST'])
 def posts():
+    # Get all posts
     if request.method == "GET":
-        #Get all questions from db
-        sql="select * from question"
-        data= sql_execute(sql)
+        sql = "select * from question"
+        data = sql_execute(sql)
     return render_template('posts.html')
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "POST":
         # User creates a new question
-        ques = request.form['text']
+        question = request.form['text']
         # Define the user id
-        sql = "insert into question(content, category, user_id) values(ques, {category}, {user_id})".format(category = ___, user_id = ___)
+        sql = "insert into question(content, category, user_id) values({question}, {category}, {user_id})".format(question = question, category = ___, user_id = ___)
         sql_execute(sql)
-    return render_template('main.html') 
+    return render_template('main.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -88,16 +113,50 @@ def profile():
 def start():
     return render_template('start.html')
 
+# User can update their email
 @app.route('/updateemail', methods=['GET', 'POST'])
 def update_email():
+    if request.method == "GET":
+        sql = "select email from user where email = {email}".format(email = session['email'])
+        sql_execute(sql)
+    if request.method == "POST":
+        new_email = request.form['new-email']
+        sql = "select count(email) from user where email = {email}".format(email = new_email)
+        count_email = sql_query(sql)
+        if count_email > 0:
+            # Handle error if user inputs email that already exists in database
+
+        sql = "update user set email = {new_email}".format(new_email = new_email)
+        sql_execute(sql)
     return render_template('updateemail.html')
 
+# User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
+    if request.method == "GET":
+        sql = "select password from user where password = {password}".format(password = session['password'])
+        sql_execute(sql)
+    if request.method == "POST":
+        new_password = request.form['new-password']
+        sql = "update user set password = {new_password}".format(new_password = new_password)
+        sql_execute(sql)
     return render_template('updatepassword.html')
 
+# User can update their username
 @app.route('/updateusername', methods=['GET', 'POST'])
 def delete_username():
+    if request.method == "GET":
+        sql = "select username from user where username = {username}".format(username = session['username'])
+        sql_execute(sql)
+    if request.method == "POST":
+        new_username = request.form['new-username']
+        sql = "select count(username) from user where username = {username}".format(username = new_username)
+        count_usernames = sql_query(sql)
+        if count_usernames > 0:
+            # Handle error if user inputs username that already exists in database
+
+        sql = "update user set_username = {new_username}".format(new_username = new_username)
+        sql_execute(sql)
     return render_template('updateusername.html')
 
 if __name__ == '__main__':
