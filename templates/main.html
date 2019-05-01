@@ -50,10 +50,17 @@
                 </form>
                 <form action="form" method="post">
                     <fieldset>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="What's your question?" aria-label="What's your question?" aria-describedby="basic-addon2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
                             <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button">Ask!</button>
+
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Catagory</button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Option 1</a>
+                                    <a class="dropdown-item" href="#">Option 2</a>
+                                    <a class="dropdown-item" href="#">Option 3</a>
+                                </div>
+                                <button type="button" class="btn btn-secondary">Post</button>
                             </div>
                         </div>
                     </fieldset>
@@ -65,7 +72,8 @@
                         <option selected>Alphabetically</option>
                         <option value="1">By Date Posted</option>
                         <option value="2">By Author</option>
-                        <option value="3">By Number of Comments</option>
+                        <option value="3">By Catagory</option>
+                        <option value="4">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
                 </form>
