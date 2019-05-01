@@ -212,15 +212,17 @@ def update_email():
 # User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
-    if request.method == "GET":
-        sql = "select password from user where password = '{password}'".format(password = session['password'])
-        sql_execute(sql)
     if request.method == "POST":
-        new_password = request.form['new-password']
-        sql = "update user set password = '{new_password}'".format(new_password = new_password)
-        sql_execute(sql)
-        return redirect(url_for('profile'))
-    return render_template('updatepassword.html', profile = session)
+        sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
+        count = sql_query(sql)
+        print(count)
+        if count[0][0] == 1:
+            sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
+            sql_execute(sql)
+            return redirect(url_for('profile'))
+        else:
+            return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
+    return render_template('updatepassword.html', template_error = "")
 
 # User can update their username
 @app.route('/updateusername', methods=['GET', 'POST'])
