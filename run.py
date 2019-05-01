@@ -33,6 +33,22 @@ def sql_execute(sql):
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    sql = "select count(id) from user where username = '{username}' and admin is true".format(username = session['username'])
+    admin_user = sql_query(sql)
+    if admin_user[0][0] > 0:
+    # if session['authorized'] == True:
+        tot_users = "select count(id) from user"
+        tot_questions = "select count(id) from question"
+        tot_comments = "select count(id) from letter"
+        comp_answers = "select count(id) from letter where votes > 5"
+        avg_questions = "select avg(n) from(select count(q.id) as n from user u inner join question q on u.id=q.user_id group by u.id) as avg_questions"
+        avg_comments = " select avg(n) from(select count(l.id) as n from user u inner join letter l on u.id=l.user_id group by u.id) as avg_comments"
+
+        # Render these queries onto webpage
+
+    else:
+        return render_template('admin.html', template_error = "You are trying to access information that requires administrative privileges. Please contact an admin for more informatiion")
+        return redirect(url_for('main'))
     return render_template('admin.html')
 
 # User can create an account
@@ -57,8 +73,11 @@ def createaccount():
             return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
         # Choose a password
         password = request.form["password"]
+
+        # TODO: Decide how a user becomes an admin, and where in code this is to be done!
         session['authorized'] = False
-        sql = "insert into user(username, email, password) values('{username}', '{email}', '{password}')".format(username = session['username'], email = session['email'], password = password)
+
+        sql = "insert into user(username, email, password, admin) values('{username}', '{email}', '{password}', {admin})".format(username = session['username'], email = session['email'], password = password, admin = 0)
         sql_execute(sql)
         return redirect(url_for('main'))
     return render_template('createaccount.html', template_error = "")
@@ -108,13 +127,13 @@ def main():
             sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
             if "Post" in request.form:
                 sql_execute(sql)
-                template_data = {}
                 sql = """select u.username, q.content, q.category, q.time_stamp
                         from user u
                         inner join question q on u.id = q.user_id
                         inner join letter l on q.id = l.question_id"""
                 questions = sql_query(sql)
                 # Render the data on the website
+                template_data = {}
 
         # User sorts questions alphabetically
         elif request.form["sorting"] == "1" and "Sort" in request.form:
@@ -150,7 +169,7 @@ def main():
             template_data = {}
 
         # User sorts questions by categories
-        elif request.form["sorting"] == "4" and "Sort" in request.form":
+        elif request.form["sorting"] == "4" and "Sort" in request.form:
             sql = """select u.username, q.content, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
@@ -214,15 +233,18 @@ def update_email():
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
     if request.method == "POST":
-        sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
-        count = sql_query(sql)
-        print(count)
-        if count[0][0] == 1:
-            sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
-            sql_execute(sql)
-            return redirect(url_for('profile'))
+        if request.form['new-password'] == request.form['retype-new-password']:
+            sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
+            count = sql_query(sql)
+            print(count)
+            if count[0][0] == 1:
+                sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
+                sql_execute(sql)
+                return redirect(url_for('profile'))
+            else:
+                return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
         else:
-            return render_template('updatepassword.html', template_error = "Could not change password: Incorrect old password")
+            return render_template('updatepassword.html', template_error = "Could not change password: New password fields do not match")
     return render_template('updatepassword.html', template_error = "")
 
 # User can update their username
