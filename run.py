@@ -108,8 +108,6 @@ def logout():
             return redirect(url_for('main'))
     return render_template('logout.html')
 
-
-
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "POST":
@@ -206,7 +204,7 @@ def update_email():
         if count_email[0][0] > 0:
             # Handle error if user inputs email that already exists in database
             return render_template('updateemail.html', template_error = "Could not update email: email is already a part of another account", profile = session)
-        sql = "update user set email = '{new_email}'".format(new_email = new_email)
+        sql = "update user set email = '{new_email}' where email = '{old_email}'".format(new_email = new_email, old_email = session['email'])
         sql_execute(sql)
         session['email'] = new_email
         return redirect(url_for('profile'))
@@ -221,7 +219,7 @@ def update_password():
             count = sql_query(sql)
             print(count)
             if count[0][0] == 1:
-                sql = "update user set password = '{new_password}'".format(new_password = request.form['new-password'])
+                sql = "update user set password = '{new_password}' where password = '{old_password}'".format(new_password = request.form['new-password'], old_password = request.form['old-password'])
                 sql_execute(sql)
                 return redirect(url_for('profile'))
             else:
@@ -243,7 +241,7 @@ def delete_username():
         if count_usernames[0][0] > 0:
             # Handle error if user inputs username that already exists in database
             return render_template("updateusername.html", template_error = "Could not update username: username is already in use", profile = session)
-        sql = "update user set username = '{new_username}'".format(new_username = new_username)
+        sql = "update user set username = '{new_username}' where username = '{old_username}'".format(new_username = new_username, old_username = session['username'])
         sql_execute(sql)
         session['username'] = new_username
         return redirect(url_for('profile'))
