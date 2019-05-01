@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html>
     <head>
         <title>Sham Answers</title>
@@ -11,6 +13,18 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
+        <style>
+            .font_control
+            {
+                background-color:#FFF;
+                padding:10px;
+            }
+            .control
+            {
+                color:#000;
+                margin:30px;
+            }
+        </style>
     </head>
     <body>
 
@@ -50,10 +64,17 @@
                 </form>
                 <form action="form" method="post">
                     <fieldset>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="What's your question?" aria-label="What's your question?" aria-describedby="basic-addon2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
                             <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button">Ask!</button>
+
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="categories">Category</button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Option 1</a>
+                                    <a class="dropdown-item" href="#">Option 2</a>
+                                    <a class="dropdown-item" href="#">Option 3</a>
+                                </div>
+                                <button type="button" class="btn btn-secondary">Post</button>
                             </div>
                         </div>
                     </fieldset>
@@ -61,11 +82,12 @@
 
                 <form class="form-inline" method="post">
                     <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Sort Questions</label>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Alphabetically</option>
-                        <option value="1">By Date Posted</option>
-                        <option value="2">By Author</option>
-                        <option value="3">By Number of Comments</option>
+                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="sorting">
+                        <option value="1"selected name=>Alphabetically</option>
+                        <option value="2">By Date Posted</option>
+                        <option value="3">By Author</option>
+                        <option value="4">By Category</option>
+                        <option value="5">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
                 </form>
@@ -74,7 +96,9 @@
                 <h1 align="center">   </h1>
                 <hr/>
 
-
             </div>
+
     </body>
+
+
 </html>

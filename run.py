@@ -99,11 +99,78 @@ def posts():
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "POST":
-        # User creates a new question
-        question = request.form['text']
-        # Define the user id
-        sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = ___, user_id = ___)
-        sql_execute(sql)
+        # User creates a new question and it posts
+        if "text" in request.form:
+            question = request.form['text']
+            category = request.form['categories']
+            sql = "select id from user where username = '{username}'".format(username = session['username'])
+            user_id = sql_query(sql)
+            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
+            sql_execute(sql)
+            template_data = {}
+            sql = """select u.username, q.content, q.category, q.time_stamp
+                    from user u
+                    inner join question q on u.id = q.user_id
+                    inner join letter l on q.id = l.question_id"""
+            questions = sql_query(sql)
+            # Render the data on the website
+
+        # User sorts questions alphabetically
+        elif request.form['categories'] == "Alphabetically":
+            sql = """select u.username, q.content, q.category, q.time_stamp
+                    from user u
+                    inner join question q on u.id = q.user_id
+                    inner join letter l on q.id = l.question_id
+                    order by q.content"""
+            ord_abc = sql_query(sql)
+            # Render the data on the website
+            template_data = {}
+
+        # User sorts questions by date posted / timestamp
+        elif request.form['categories'] == "By Date Posted":
+            sql = """select u.username, q.content, q.category, q.time_stamp
+                    from user u
+                    inner join question q on u.id = q.user_id
+                    inner join letter l on q.id = l.question_id
+                    order by q.time_stamp"""
+            ord_time_stamp = sql_query(sql)
+            # Render the data on the website
+            template_data = {}
+
+        # User sorts questions by author
+        elif request.form['categories'] == "By Author":
+            sql = """select u.username, q.content, q.category, q.time_stamp
+                    from user u
+                    inner join question q on u.id = q.user_id
+                    inner join letter l on q.id = l.question_id
+                    order by u.username"""
+            ord_author = sql_query(sql)
+            # Render the data on the website
+            template_data = {}
+
+        # User sorts questions by categories
+        elif request.form['categories'] == "By Category":
+            sql = """select u.username, q.content, q.category, q.time_stamp
+                    from user u
+                    inner join question q on u.id = q.user_id
+                    inner join letter l on q.id = l.question_id
+                    order by q.category"""
+            ord_cats = sql_query(sql)
+            # Render the data on the website
+            template_data = {}
+
+        # User sorts questions by number of comments, descending order
+        else:
+            sql = """select u.username, q.content, q.category, q.time_stamp
+                    from user u
+                    inner join question q on u.id = q.user_id
+                    inner join letter l on q.id = l.question_id
+                    group by u.username, q.content, q.category, q.time_stamp
+                    order by count(l.alphabet_letter) desc"""
+            ord_num_comments = sql_query(sql)
+            # Render the data on the website
+            template_data = {}
+
     return render_template('main.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
