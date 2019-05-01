@@ -90,22 +90,21 @@
                 <hr/>
 
                 </form>
-                <form action="form" method="post">
+                <form class="form" method="post">
                     <fieldset>
-                        <div class="input-group">
-                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
-                            <div class="input-group-append">
-
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="categories">Category</button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Humor</a>
-                                    <a class="dropdown-item" href="#">Advice</a>
-                                    <a class="dropdown-item" href="#">Dating</a>
-                                    <a class="dropdown-item" href="#">Sports </a>
-                                    <a class="dropdown-item" href="#">School</a>
-                                </div>
-                                <button type="button" class="btn btn-secondary">Post</button>
-                            </div>
+			<div class="row">
+			    <div class="form-group col-md">
+                                <input name="text" type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+			    </div>
+                            <div class="form-group column">
+			        <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="categories">
+				    <option value="humor"selected name=>Humor</option>
+				    <option value="advice">Advice</option>
+				    <option value="dating">Dating</option>
+				    <option value="sports">Sports</option>
+			            <option value="school">School</option>
+			        </select>
+                            <input name="submit" type="submit" value = "Post" class="btn btn-secondary"/>
                         </div>
                     </fieldset>
                 </form>
@@ -134,7 +133,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <script>
                         {% for author, category, post, number in posts %}
                             <tr>
                                 <td>{{ category }}</td>
@@ -147,7 +145,6 @@
                                 </td>
                             </tr>
                         {% endfor %}
-                    </script>
 
                     </tbody>
                 </table>

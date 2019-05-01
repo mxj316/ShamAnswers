@@ -119,8 +119,8 @@ def main():
             category = request.form['categories']
             sql = "select id from user where username = '{username}'".format(username = session['username'])
             user_id = sql_query(sql)
-            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id)
-            if "Post" in request.form:
+            sql = "insert into question(content, category, user_id) values('{question}', '{category}', '{user_id}')".format(question = question, category = category, user_id = user_id[0][0])
+            if "submit" in request.form:
                 sql_execute(sql)
                 sql = """select u.username, q.content, q.category, q.time_stamp
                         from user u
@@ -129,10 +129,9 @@ def main():
                 questions = sql_query(sql)
                 # Render the data on the website
                 template_data = {}
-
         # User sorts questions alphabetically
         elif request.form["sorting"] == "1" and "Sort" in request.form:
-            sql = """select u.username, q.content, q.category, q.time_stamp
+            sql = """select u.username, q.category, q.time_stamp
                     from user u
                     inner join question q on u.id = q.user_id
                     inner join letter l on q.id = l.question_id
@@ -140,6 +139,7 @@ def main():
             ord_abc = sql_query(sql)
             # Render the data on the website
             template_data = {}
+            print(ord_abc)
 
         # User sorts questions by date posted / timestamp
         elif request.form["sorting"] == "2" and "Sort" in request.form:
@@ -151,6 +151,7 @@ def main():
             ord_time_stamp = sql_query(sql)
             # Render the data on the website
             template_data = {}
+            print(ord_time)
 
         # User sorts questions by author
         elif request.form["sorting"] == "3" and "Sort" in request.form:
@@ -162,6 +163,7 @@ def main():
             ord_author = sql_query(sql)
             # Render the data on the website
             template_data = {}
+            print(ord_author)
 
         # User sorts questions by categories
         elif request.form["sorting"] == "4" and "Sort" in request.form:
@@ -173,6 +175,7 @@ def main():
             ord_cats = sql_query(sql)
             # Render the data on the website
             template_data = {}
+            print(ord_cats)
 
         # User sorts questions by number of comments, descending order
         else:
@@ -185,6 +188,7 @@ def main():
             ord_num_comments = sql_query(sql)
             # Render the data on the website
             template_data = {}
+            print(ord_num_comments)
 
     return render_template('main.html')
 
