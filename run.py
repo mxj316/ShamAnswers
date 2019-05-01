@@ -46,21 +46,23 @@ def createaccount():
         count_email = sql_query(sql)
         if count_email > 0:
             # Handle error if user inputs email that already exists in database
-
+            session.pop("email")
+            return render_template('createaccount.html', template_error = "Could not create account: email is part of another account")
         # Choose username, and check if it already exists in the database
         session['username'] = request.form["username"]
         sql = "select count(username) from user where username = {username}".format(username = session['username'])
         count_usernames = sql_query(sql)
         if count_usernames > 0:
             # Handle error if user inputs username that already exists in database
-
+            session.pop("username")
+            return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
         # Choose a password
         password = request.form["password"]
         session['authorized'] = False
         sql = "insert into user(username, email, password) values({username}, {email}, {password})".format(username = session['username'], email = session['email'], password = password)
         sql_execute(sql)
         return redirect(url_for('main'))
-    return render_template('createaccount.html')
+    return render_template('createaccount.html', template_error = "")
 
 # User can delete an account
 @app.route('/deleteaccount', methods=['GET', 'POST'])
@@ -125,10 +127,12 @@ def update_email():
         count_email = sql_query(sql)
         if count_email > 0:
             # Handle error if user inputs email that already exists in database
-
+            return render_template('updateemail.html', template_error = "Could not update email: email is already a part of another account")
         sql = "update user set email = {new_email}".format(new_email = new_email)
         sql_execute(sql)
-    return render_template('updateemail.html')
+        session['email'] = new_email
+        return redirect(url_for('profile'))
+    return render_template('updateemail.html', template_error = "")
 
 # User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
@@ -140,6 +144,7 @@ def update_password():
         new_password = request.form['new-password']
         sql = "update user set password = {new_password}".format(new_password = new_password)
         sql_execute(sql)
+        return redirect(url_for('profile'))
     return render_template('updatepassword.html')
 
 # User can update their username
@@ -154,10 +159,12 @@ def delete_username():
         count_usernames = sql_query(sql)
         if count_usernames > 0:
             # Handle error if user inputs username that already exists in database
-
+            return render_template("updateusername.html", template_error = "Could not update username: username is already in use")
         sql = "update user set_username = {new_username}".format(new_username = new_username)
         sql_execute(sql)
-    return render_template('updateusername.html')
+        session['username'] = new_username
+        return redirect(url_for('profile'))
+    return render_template('updateusername.html', template_error = "")
 
 if __name__ == '__main__':
     app.run(**config['app'])
