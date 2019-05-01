@@ -1,3 +1,5 @@
+<!-- Page for changing the user's username -->
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -42,7 +44,7 @@
                     <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
-
+            <!-- Displays old username, and gets text input for new username -->
             <div  class="container">
 
                 <h1 align="center">Change Username</h1>
@@ -73,6 +75,8 @@
                     <div class="col col-md-4">
                     </div>
                 </div>
+
+            <!-- Error case if entered username is already in use -->
 	    	{% if template_error != ""  %}
 			<p style="color: red;">{{template_error}}</p>
 	    	{% endif %}

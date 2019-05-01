@@ -79,6 +79,9 @@
                 <div class="col col-md-4">
                 </div>
             </div>
+
+        <!-- Error case for if entered information is already a part of another account, -->
+        <!-- or a template error                                                         -->
 	    {% if template_error != ""  %}
 		<p style="color: red;">{{template_error}}</p>
 	    {% endif %}
