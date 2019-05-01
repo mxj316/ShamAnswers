@@ -20,50 +20,50 @@
         <script type="text/javascript" src="js/jquery-comments.js"></script>
 
         <!-- Init jquery-comments -->
-		<script type="text/javascript">
-			$(function() {
-				$('#comments-container').comments({
-					currentUserId: 1,
-					roundProfilePictures: false,
-					textareaRows: 1,
+        <script type="text/javascript">
+            $(function() {
+                $('#comments-container').comments({
+                    currentUserId: 1,
+                    roundProfilePictures: false,
+                    textareaRows: 1,
                     enableDeleting: false,
                     enableDeletingCommentWithReplies: false,
                     enableEditing: false,
                     postCommentOnEnter: true,
                     replyText: 'Answer',
-					getUsers: function(success, error) {
-						setTimeout(function() {
-							success(usersArray);
-						}, 500);
-					},
-					getComments: function(success, error) {
-						setTimeout(function() {
-							success(commentsArray);
-						}, 500);
-					},
-					postComment: function(data, success, error) {
-						setTimeout(function() {
-							success(saveComment(data));
-						}, 500);
-					},
-					putComment: function(data, success, error) {
-						setTimeout(function() {
-							success(saveComment(data));
-						}, 500);
-					},
-					deleteComment: function(data, success, error) {
-						setTimeout(function() {
-							success();
-						}, 500);
-					},
-					upvoteComment: function(data, success, error) {
-						setTimeout(function() {
-							success(data);
-						}, 500);
-					},
-				});
-			});
-		</script>
+                    getUsers: function(success, error) {
+                        setTimeout(function() {
+                            success(usersArray);
+                        }, 500);
+                    },
+                    getComments: function(success, error) {
+                        setTimeout(function() {
+                            success(commentsArray);
+                        }, 500);
+                    },
+                    postComment: function(data, success, error) {
+                        setTimeout(function() {
+                            success(saveComment(data));
+                        }, 500);
+                    },
+                    putComment: function(data, success, error) {
+                        setTimeout(function() {
+                            success(saveComment(data));
+                        }, 500);
+                    },
+                    deleteComment: function(data, success, error) {
+                        setTimeout(function() {
+                            success();
+                        }, 500);
+                    },
+                    upvoteComment: function(data, success, error) {
+                        setTimeout(function() {
+                            success(data);
+                        }, 500);
+                    },
+                });
+            });
+        </script>
 
     </head>
     <body>
@@ -82,9 +82,9 @@
                         </li>
                         <script>
                             {% if authorized %}
-                            <li class="nav-item">
+                                <li class="nav-item">
                                 <a class="nav-link" href="admin">Admin</a>
-                            </li>
+                                </li>
                             {% endif %}
                         </script>
                         <li class="nav-item">
@@ -92,7 +92,7 @@
                         </li>
                     </ul>
                 </div>
-                    <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
+                <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
             <!-- Displays the question, its author, and its category -->
