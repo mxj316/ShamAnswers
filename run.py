@@ -81,7 +81,7 @@ def createaccount():
                 return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
             # Choose a password
             password = request.form["password"]
-            sql = "insert into user(username, email, password, admin) values(%s, %s, %s, %s)"
+            sql = "insert into user(username, email, password) values(%s, %s, %s)"
             query_params = [(session['username'], session['email'], password)]
             sql_execute(sql, *query_params)
             sql = "select last_insert_id()"
@@ -192,7 +192,8 @@ def main():
             questions = sql_query(sql)
     template_data = [];
     for row in questions:
-        template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]})
+        template_data.append({"author": row[0], "post": row[1], "category": row[2], "time": row[3], "number": row[4]})
+    print(template_data)
     return render_template('main.html', posts=template_data)
 
 @app.route('/post/<question>', methods=['GET', 'POST'])
