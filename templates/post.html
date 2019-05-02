@@ -64,7 +64,19 @@
                 <hr/>
 
                 <div class="col col-md-4">Answer</div>
-
+		{%for first_letter in comments%}
+		    {%for letter_row in first_letter%}
+			<div class = "row">
+			    {%for letter in letter_row%}
+				<div class = "column">
+					{{letter["content"]}}
+				</div>
+			    {%endfor%}
+			</div>
+		    {%endfor%}
+		    <br/>
+		{%endfor%}
+	</ul>
             </div>
 	<!-- Input text box for submitting answers -->
                                                         
@@ -82,18 +94,6 @@
                                 <input name="text" type="text" name="letter" maxlength="2" size="2"><br>
                             </div>
 	  <ul class="letters">
-	{%for first_letter in comments%}
-	    {%for letter_row in first_letter%}
-	        <div class = "row">
-		    {%for letter in letter_row%}
-		        <div class = "column">
-				{{letter["content"]}}
-			</div>
-		    {%endfor%}
-		</div>
-	    {%endfor%}
-	{%endfor%}
-	</ul>
         <!-- Shows structure of answers -->
 		<div id="comments-container"></div>
 
