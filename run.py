@@ -34,6 +34,8 @@ def sql_execute(sql, *query_params):
 # User can view basic site statistics (demonstrates some aggregate queries)
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     # Queries
     tot_users = "select count(id) from user"
     tot_questions = "select count(id) from question"
@@ -96,6 +98,8 @@ def createaccount():
 # User can delete an account
 @app.route('/deleteaccount', methods=['GET', 'POST'])
 def delete_account():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "POST":
         if "Yes" in request.form:
             sql = "select id from user where username = %s"
@@ -112,7 +116,8 @@ def delete_account():
 # User can logout from their account
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    print(request.form)
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if "returnhome" in request.form:
         if request.form["returnhome"] == "Yes":
             session.pop("username", None)
@@ -126,6 +131,8 @@ def logout():
 # The main page
 @app.route('/main', methods=['GET', 'POST'])
 def main():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "GET":
         sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                 from user u
@@ -192,12 +199,13 @@ def main():
     template_data = [];
     for row in questions:
         template_data.append({"author": row[0], "post": row[1], "category": row[2], "time": row[3], "number": row[4]})
-    print(template_data)
     return render_template('main.html', posts=template_data)
 
 # User is linked to a page containing the chosen question and its associated comments
 @app.route('/post/<question>', methods=['GET', 'POST'])
 def post(question):
+    if not 'id' in session:
+        return redirect(url_for('start'))
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
@@ -221,6 +229,8 @@ def post(question):
 # User can view basic profile information and update their email, username or password, and delete their account
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     return render_template('profile.html', profile = session)
 
 # User is directed to the start page upon loading the website
@@ -242,6 +252,8 @@ def start():
 # User can update their email
 @app.route('/updateemail', methods=['GET', 'POST'])
 def update_email():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "GET":
         sql = "select email from user where email = %s"
         query_params = [(session['email'],)]
@@ -264,6 +276,8 @@ def update_email():
 # User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "POST":
         if request.form['new-password'] == request.form['retype-new-password']:
             sql = "select count(username) from user where email = %s and password = %s"
@@ -284,6 +298,8 @@ def update_password():
 # User can update their username
 @app.route('/updateusername', methods=['GET', 'POST'])
 def delete_username():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "GET":
         sql = "select username from user where username = %s"
         query_params = [(session['username'],)]
