@@ -22,9 +22,9 @@ create table question(
     content varchar(255) not null,
     category varchar(255) not null,
     time_stamp timestamp not null default current_timestamp,
-    completed boolean not null,
+    completed boolean not null default 0,
     user_id int not null,
-    foreign key (user_id) references user(id)
+    foreign key (user_id) references user(id) on delete cascade
 );
 create table letter(
     id int not null auto_increment primary key,
