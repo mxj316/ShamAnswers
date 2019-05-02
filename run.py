@@ -206,7 +206,6 @@ def main():
 def post(question):
     if not 'id' in session:
         return redirect(url_for('start'))
-    print(question)
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
@@ -227,7 +226,12 @@ def post(question):
         else:
             user_vote = False
             template_data.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
-    return render_template('post.html', comments = template_data)
+    sql = """select q.content, u.username, q.category
+             from question q inner join user u on q.user_id = u.id
+             where q.id = %s"""
+    query_params = [(question,)]
+    question_data = sql_query(sql, *query_params)
+    return render_template('post.html', comments = template_data, post = question_data[0][0], author = question_data[0][1], category = question_data[0][2])
 
 # User can view basic profile information and update their email, username or password, and delete their account
 @app.route('/profile', methods=['GET', 'POST'])
