@@ -101,15 +101,15 @@ def delete_account():
     if not 'id' in session:
         return redirect(url_for('start'))
     if request.method == "POST":
-        if "Yes" in request.form:
+        if "delete-btn" in request.form:
             sql = "select id from user where username = %s"
             query_params = [(session['username'],)]
-            user_id = sql_query(sql)
-            sql = "delete * from user where id = %s"
+            user_id = sql_query(sql, *query_params)
+            sql = "delete from user where id = %s"
             query_params = [(user_id[0][0],)]
             sql_execute(sql, *query_params)
             return redirect(url_for('start'))
-        if "No" in request.form:
+        if "returnhome" in request.form:
             return redirect(url_for('main'))
     return render_template('deleteaccount.html')
 
