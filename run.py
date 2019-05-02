@@ -206,13 +206,14 @@ def main():
 def post(question):
     if not 'id' in session:
         return redirect(url_for('start'))
+    print(question)
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
                  inner join vote v on v.letter_id = l.id
                  where q.id = %s
-                 group by l.id"""
-    query_params = [(question)]
+                 group by l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username"""
+    query_params = [(question,)]
     letter_data = sql_query(sql, *query_params)
     letter=request.form['text']
     template_data = []
