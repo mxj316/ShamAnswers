@@ -95,13 +95,6 @@
                     </thead>
                     <tbody>
                     {% for question in posts %}
-                        <script>
-                            var qString = {{ question['number'] }};
-                            var pString = "";
-                            pString += "post/" + qString;
-                                document.getElementById("button").href = pString;
-
-                        </script>
                         <tr>
                             <td>{{ question['category'] }}</td>
                             <td>{{ question['post'] }}</td>
@@ -109,7 +102,9 @@
                             <td>{{ question['time'] }}</td>
                             <td>
                                 <form action="">
-                                    <a class="btn btn-secondary"  id="button" href="post/" role="button">Answer</a>
+                                    <script>
+                                        document.write('<a class="btn btn-secondary" id="button" href="post/' + {{ question['number'] }} + '">Answer</a>')
+                                    </script>
                                 </form>
                                 </td>
                             </tr>
