@@ -212,15 +212,7 @@ def post(question):
         return redirect(url_for('profile'))
     if question == "logout":
         return redirect(url_for('logout'))
-    sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
-                 from question q inner join letter l on l.question_id = q.id
-                 inner join user u on l.user_id = u.id
-                 left join vote v on v.letter_id = l.id
-                 where q.id = %s
-                 group by l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username"""
-    query_params = [(question,)]
-    letter_data = sql_query(sql, *query_params)
-    if request.method == 'POST' and strlen(request.form['text']) == 1:
+    if request.method == 'POST' and len(request.form['text']) == 1:
         if request.form.keys()[1] == "None":
             sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
             query_params = [(request.form['text'], session['id'], question, None)]
@@ -230,6 +222,14 @@ def post(question):
             query_params = [(request.form['text'], session['id'], question, list(request.form.keys())[1])]
             sql_execute(sql, *query_params)
         return redirect(url_for('post', question = question))
+    sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
+                 from question q inner join letter l on l.question_id = q.id
+                 inner join user u on l.user_id = u.id
+                 left join vote v on v.letter_id = l.id
+                 where q.id = %s
+                 group by l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username"""
+    query_params = [(question,)]
+    letter_data = sql_query(sql, *query_params)
     letter_dicts = []
     template_data = []
     for row in letter_data:
