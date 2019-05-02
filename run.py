@@ -75,10 +75,11 @@ def createaccount():
             # Choose a password
             password = request.form["password"]
             # TODO: Decide how a user becomes an admin, and where in code this is to be done!
-            session['authorized'] = False
-            sql = "insert into user(username, email, password, admin) values(%s, %s, %s, %s)"
-            query_params = [(session['username'], session['email'], password, 0)]
-            sql_execute(sql, *query_params)
+            sql = "insert into user(username, email, password, admin) values('{username}', '{email}', '{password}', false)".format(username = session['username'], email = session['email'], password = password)
+            sql_execute(sql)
+            sql = "select last_insert_id()"
+            user_id = sql_query(sql)
+            session['id'] = user_id[0][0]
             return redirect(url_for('main'))
         else:
             return render_template('createaccount.html', template_error = "Could not create account: password fields do not match")
@@ -107,6 +108,7 @@ def logout():
             session.pop("username", None)
             session.pop("email", None)
             session.pop("authorized", None)
+            session.pop("id", None)
             return redirect(url_for('start'))
         if request.form["returnhome"] == "No":
             return redirect(url_for('main'))
@@ -114,6 +116,12 @@ def logout():
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
+    if request.method == "GET":
+        # sql_execute(sql)
+        sql = """select u.username, q.content, q.category, q.time_stamp, q.id
+                from user u
+                inner join question q on u.id = q.user_id"""
+        questions = sql_query(sql)
     if request.method == "POST":
         # User creates a new question and it posts
         if "text" in request.form:
@@ -121,7 +129,7 @@ def main():
             category = request.form['categories']
             sql = "select id from user where username = '{username}'".format(username = session['username'])
             user_id = sql_query(sql)
-            sql = "insert into question(content, category, user_id) values(%s, %s, %s)"
+            sql = "insert into question(content, category, user_id, completed) values(%s, %s, %s, false)"
             if "submit" in request.form:
                 query_params = [(question, category, user_id[0][0])]
                 sql_execute(sql, *query_params)
@@ -172,13 +180,31 @@ def main():
                     group by u.username, q.content, q.category, q.time_stamp
                     order by count(l.alphabet_letter) desc"""
             questions = sql_query(sql)
-        template_data = [];
-        for row in questions:
-            template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]})
-        print(template_data)
-        return render_template('main.html', posts=template_data)
+    template_data = [];
+    for row in questions:
+        template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]})
+    print(template_data)
+    return render_template('main.html', posts=template_data)
 
-    return render_template('main.html')
+@app.route('/post/<question>', methods=['GET', 'POST'])
+def post(question):
+    sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
+                 from question q inner join letter l on l.question_id = q.id
+                 inner join user u on l.user_id = u.id
+                 inner join vote v on v.letter_id = l.id
+                 where q.id = '{current_question}'
+                 group by l.id""".format(current_question = question)
+    letter_data = sql_query(sql)
+    template_data = []
+    for row in letter_data:
+        sql = "select v.user_id from vote where v.letter_id = '{current_letter}' and v.user_id = '{current_user}'".format(current_letter = row[0], current_user = session['id'])
+        result = sql_query(sql)
+        if(len(result) > 0):
+            user_vote = True
+        else:
+            user_vote = False
+            template_data.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
+    return render_template('post.html', comments = template_data)
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -187,11 +213,12 @@ def profile():
 @app.route('/', methods=['GET', 'POST'])
 def start():
     if request.method == "POST":
-        sql = "select username, email from user where user.email='{email}' and user.password='{password}'".format(email = request.form['email'], password = request.form['password'])
+        sql = "select username, email, id from user where user.email='{email}' and user.password='{password}'".format(email = request.form['email'], password = request.form['password'])
         result = sql_query(sql)
         if len(result) == 1:
             session['username'] = result[0][0]
             session['email'] = result[0][1]
+            session['id'] = result[0][1]
             return redirect(url_for('main'))
         else:
             return render_template('start.html', template_error="Could not login: incorrect username or password")

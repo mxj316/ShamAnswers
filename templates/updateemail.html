@@ -1,3 +1,5 @@
+<!-- Page for changing the user's email account linked to their profile -->
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -28,9 +30,9 @@
                         </li>
                         <script>
                             {% if authorized %}
-                            <li class="nav-item">
+                                <li class="nav-item">
                                 <a class="nav-link" href="admin">Admin</a>
-                            </li>
+                                </li>
                             {% endif %}
                         </script>
                         <li class="nav-item">
@@ -39,10 +41,10 @@
                     </ul>
                 </div>
 
-                    <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
+                <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
-
+            <!-- Displays old email, and gives input group for new email submission -->
             <div  class="container">
 
                 <h1 align="center">Change Email</h1>
@@ -73,9 +75,11 @@
                     <div class="col col-md-4">
                     </div>
                 </div>
-	    	{% if template_error != ""  %}
-			<p style="color: red;">{{template_error}}</p>
-	    	{% endif %}
+
+                <!-- Error case for if new email is the same as the old email -->
+                {% if template_error != ""  %}
+                    <p style="color: red;">{{template_error}}</p>
+                {% endif %}
             </div>
     </body>
 </html>
