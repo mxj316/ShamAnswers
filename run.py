@@ -206,6 +206,12 @@ def main():
 def post(question):
     if not 'id' in session:
         return redirect(url_for('start'))
+    if question == "admin":
+        return redirect(url_for('admin'))
+    if question == "profile":
+        return redirect(url_for('profile'))
+    if question == "logout":
+        return redirect(url_for('logout'))
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
