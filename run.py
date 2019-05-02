@@ -112,6 +112,8 @@ def logout():
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
+    if request.method == "GET":
+        return redirect(url_for('post'))
     if request.method == "POST":
         # User creates a new question and it posts
         if "text" in request.form:
@@ -177,6 +179,12 @@ def main():
         return render_template('main.html', posts=template_data)
 
     return render_template('main.html')
+
+@app.route('/post/<question>', methods=['GET', 'POST'])
+def post(question):
+    # Render the data on the website
+            template_data = {}
+    return render_template('post.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
