@@ -74,10 +74,10 @@
 		   <div class="col col-md-4">Answer</div>
 			{%for first_letter in comments%}
 			    {%for letter_row in first_letter%}
-				<div class = "row">
+				<div class = "form-row">
 				    {%for letter in letter_row%}
 					<div class = "column">
-						{{letter["content"]}}
+						<input name={{letter["Id"]}} type="submit" value ={{letter["content"]}}  class="btn btn-secondary"/>
 					</div>
 				    {%endfor%}
 				</div>
