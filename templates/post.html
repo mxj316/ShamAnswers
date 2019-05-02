@@ -16,54 +16,70 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
+        <!-- Data -->
+		<script type="text/javascript" src="data/comments-data.js"></script>
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>
         <link rel="stylesheet" type="text/css" href="css/jquery-comments.css">
         <script type="text/javascript" src="js/jquery-comments.js"></script>
 
         <!-- Init jquery-comments -->
         <script type="text/javascript">
-            $(function() {
-                $('#comments-container').comments({
-                    currentUserId: 1,
-                    roundProfilePictures: false,
-                    textareaRows: 1,
-                    enableDeleting: false,
-                    enableDeletingCommentWithReplies: false,
-                    enableEditing: false,
-                    postCommentOnEnter: true,
-                    replyText: 'Answer',
-                    getUsers: function(success, error) {
-                        setTimeout(function() {
-                            success({{ letter_data['creator'] }});
-                        }, 500);
-                    },
-                    getComments: function(success, error) {
-                        setTimeout(function() {
-                            success({{ letter_data['content'] }});
-                        }, 500);
-                    },
-                    postComment: function(data, success, error) {
-                        setTimeout(function() {
-                            success(saveComment(data));
-                        }, 500);
-                    },
-                    putComment: function(data, success, error) {
-                        setTimeout(function() {
-                            success(saveComment(data));
-                        }, 500);
-                    },
-                    deleteComment: function(data, success, error) {
-                        setTimeout(function() {
-                            success();
-                        }, 500);
-                    },
-                    upvoteComment: function(data, success, error) {
-                        setTimeout(function() {
-                            success(data);
-                        }, 500);
-                    },
-                });
-            });
-        </script>
+            			$(function() {
+				var saveComment = function(data) {
+					// Convert pings to human readable format
+					$(data.pings).each(function(index, id) {
+						var user = usersArray.filter(function(user){return user.id == id})[0];
+						data.content = data.content.replace('@' + id, '@' + user.fullname);
+					});
+					return data;
+				}
+				$('#comments-container').comments({
+					profilePictureURL: 'https://viima-app.s3.amazonaws.com/media/public/defaults/user-icon.png',
+					currentUserId: 1,
+					roundProfilePictures: true,
+					textareaRows: 1,
+					enableAttachments: true,
+					enableHashtags: true,
+					enablePinging: true,
+					getUsers: function(success, error) {
+						setTimeout(function() {
+							success(usersArray);
+						}, 500);
+					},
+					getComments: function(success, error) {
+						setTimeout(function() {
+							success(commentsArray);
+						}, 500);
+					},
+					postComment: function(data, success, error) {
+						setTimeout(function() {
+							success(saveComment(data));
+						}, 500);
+					},
+					putComment: function(data, success, error) {
+						setTimeout(function() {
+							success(saveComment(data));
+						}, 500);
+					},
+					deleteComment: function(data, success, error) {
+						setTimeout(function() {
+							success();
+						}, 500);
+					},
+					upvoteComment: function(data, success, error) {
+						setTimeout(function() {
+							success(data);
+						}, 500);
+					},
+					uploadAttachments: function(dataArray, success, error) {
+						setTimeout(function() {
+							success(dataArray);
+						}, 500);
+					},
+				});
+			});
+		</script>
 
     </head>
     <body>
@@ -119,7 +135,7 @@
                     document.write('<p id="' + {{ letter_data['id'] }} + '" name="' + {{ letter_data['creator'] }} + '" >{{ letter_data['content'] }} </p>')
                 </script>
             {% endfor %}
-            
+
         </div>
 
     </body>
