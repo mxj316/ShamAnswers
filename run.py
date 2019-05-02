@@ -17,7 +17,6 @@ app.secret_key = os.urandom(24)
 def sql_query(sql, *query_params):
     db = mysql.connector.connect(**config['mysql.connector'])
     cursor = db.cursor(buffered = True)
-    print(*query_params)
     cursor.execute(sql, *query_params)
     result = cursor.fetchall()
     cursor.close()
