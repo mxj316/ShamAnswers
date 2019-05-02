@@ -125,6 +125,38 @@
                 <div class="col col-md-4">Answer</div>
 
             </div>
+	<!-- Input text box for submitting answers -->
+                                                        
+            <div class="container">
+
+                <br>
+                <h1 align="center">   </h1>
+                <hr/>
+
+                </form>
+                <form class="form" method="post">
+                    <fieldset>
+		<div class="row">
+                            <div class="form-group col-md">
+                                <input name="text" type="text" name="letter" maxlength="2" size="2"><br>
+                            </div>
+	  <div class="col-sm-5 col-sm-offset-1">
+          {% if letter_data %}
+           
+            <div id="letters">
+              <table class="table table-striped" style="max-width: 300px;">
+                
+                {% for letter in comments%}
+                  <tr>
+                    <td>{{ letter[0] }}</td>
+                    <td>{{ letter[1] }}</td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+          {% endif %}
+        </div>
+      </div>
 
         <!-- Shows structure of answers -->
 		<div id="comments-container"></div>

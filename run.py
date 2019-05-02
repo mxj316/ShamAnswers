@@ -214,6 +214,7 @@ def post(question):
                  group by l.id"""
     query_params = [(question)]
     letter_data = sql_query(sql, *query_params)
+    letter=request.form['text']
     template_data = []
     for row in letter_data:
         sql = "select v.user_id from vote where v.letter_id = %s and v.user_id = %s"
