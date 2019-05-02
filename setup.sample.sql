@@ -34,9 +34,9 @@ create table letter(
     user_id int not null,
     question_id int not null,
     sub_letter_id int,
-    foreign key (user_id) references user(id),
-    foreign key (question_id) references question(id),
-    foreign key (sub_letter_id) references letter(id)
+    foreign key (user_id) references user(id) on delete cascade,
+    foreign key (question_id) references question(id) on delete cascade,
+    foreign key (sub_letter_id) references letter(id) on delete cascade
 );
 -- relations
 create table submit(
@@ -54,14 +54,14 @@ create table vote(
 );
 
 -- insert data into database (temporary data for testing if needed)
-insert into user(username, email, password) values('Coolsnail123', 'raj@case.edu', 'Skyrim');
-insert into user(username, email, password) values('SgtPepper', 'pepperkep@case.edu', 'Inside');
-insert into user(username, email, password) values('Meshy00', 'organizer@case.edu', 'DivinityTho');
-insert into user(username, email, password) values('Andre3000', 'micycle@case.edu', 'Motorcycle');
-insert into user(username, email, password) values('JosephJoeStarII', 'noobmaster69@case.edu', 'MemeLord');
+insert into user(username, email, password) values('HaroldFanBoy', 'raj@case.edu', 'Javadoc');
+insert into user(username, email, password) values('Chris321', 'chris123@case.edu', 'Inside');
+insert into user(username, email, password) values('CWRUfan', 'organizer@case.edu', 'DivinityTho');
+insert into user(username, email, password) values('Babs', 'helloworld@case.edu', 'Password');
+insert into user(username, email, password) values('JosephJoeStarII', 'johnson@case.edu', 'Databases');
 
 insert into question(content, category, user_id) values('Are Javadoc comments the coolest thing ever?', 'Advice', 1);
-insert into question(content, category, user_id) values('Is Hot Pie the key to everything?', 'Humor', 4);
+insert into question(content, category, user_id) values('Is EECS 341 not the greatest class ever?', 'Humor', 4);
 
 insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('Y', 2, 2, null);
 insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('E', 2, 2, 1);

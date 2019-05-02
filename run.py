@@ -63,6 +63,7 @@ def admin():
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if "email" in request.form:
+        # Reentered passwords match one another
         if request.form['password'] == request.form['retype-password']:
             # Choose an email address, and check if it already exists in the database
             session['email'] = request.form["email"]
@@ -92,6 +93,7 @@ def createaccount():
             session['id'] = user_id[0][0]
             return redirect(url_for('main'))
         else:
+            # Users must correctly reenter password to confirm, otherwise will throw an error
             return render_template('createaccount.html', template_error = "Could not create account: password fields do not match")
     return render_template('createaccount.html', template_error = "")
 
@@ -101,6 +103,7 @@ def delete_account():
     if not 'id' in session:
         return redirect(url_for('start'))
     if request.method == "POST":
+        # Deletes all related information to the User if they select "Yes"
         if "delete-btn" in request.form:
             sql = "select id from user where username = %s"
             query_params = [(session['username'],)]
@@ -109,6 +112,7 @@ def delete_account():
             query_params = [(user_id[0][0],)]
             sql_execute(sql, *query_params)
             return redirect(url_for('start'))
+        # User is returned to the home page if they select "No"
         if "returnhome" in request.form:
             return redirect(url_for('main'))
     return render_template('deleteaccount.html')
@@ -119,11 +123,13 @@ def logout():
     if not 'id' in session:
         return redirect(url_for('start'))
     if "returnhome" in request.form:
+        # Logs the User out if they select "Yes"
         if request.form["returnhome"] == "Yes":
             session.pop("username", None)
             session.pop("email", None)
             session.pop("id", None)
             return redirect(url_for('start'))
+        # Returns the User to the main page if they select "No"
         if request.form["returnhome"] == "No":
             return redirect(url_for('main'))
     return render_template('logout.html')
@@ -212,16 +218,7 @@ def post(question):
         return redirect(url_for('profile'))
     if question == "logout":
         return redirect(url_for('logout'))
-    if request.method == 'POST' and len(request.form['text']) == 1:
-        if request.form.keys()[1] == "None":
-            sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
-            query_params = [(request.form['text'], session['id'], question, None)]
-            sql_execute(sql, *query_params)
-        else:
-            sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
-            query_params = [(request.form['text'], session['id'], question, list(request.form.keys())[1])]
-            sql_execute(sql, *query_params)
-        return redirect(url_for('post', question = question))
+    # Query to collect all necessary data for storing the letter informatiion
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
@@ -241,6 +238,21 @@ def post(question):
         else:
             user_vote = False
         letter_dicts.append({"Id": row[0], "parent": row[1], "created": row[2], "content": row[3], "creator": row[4], "fullname": row[5], "upvote_count": row[6], "user_has_upvoted": user_vote})
+    if request.method == 'POST' and len(request.form['text']) == 1:
+        user_submitted = True
+        for letter in letter_dicts:
+            if letter["creator"] == session["id"]:
+                user_submitted = False
+        if user_submitted:
+            if request.form.keys()[1] == "None":
+                sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
+                query_params = [(request.form['text'], session['id'], question, None)]
+                sql_execute(sql, *query_params)
+            else:
+                sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
+                query_params = [(request.form['text'], session['id'], question, list(request.form.keys())[1])]
+                sql_execute(sql, *query_params)
+        return redirect(url_for('post', question = question))
     if len(letter_dicts) > 0:
         for letter in letter_dicts:
             if letter["parent"] == None:
@@ -255,6 +267,7 @@ def post(question):
     else:
         return render_template('post.html', comments = template_data)
 
+# Helper recursive function for displaying building words from user input
 def find_next_letter(letter_data, prior_data):
     count = 0
     parent_id = prior_data[-1]["Id"]
@@ -282,6 +295,7 @@ def start():
         query_params = [(request.form['email'], request.form['password'])]
         result = sql_query(sql, *query_params)
         if len(result) == 1:
+            # Stores User information in a session
             session['username'] = result[0][0]
             session['email'] = result[0][1]
             session['id'] = result[0][2]
