@@ -22,33 +22,50 @@ create table question(
     content varchar(255) not null,
     category varchar(255) not null,
     time_stamp timestamp not null default current_timestamp,
+    completed boolean not null default 0,
     user_id int not null,
-    foreign key (user_id) references user(id)
+    foreign key (user_id) references user(id) on delete cascade
 );
 create table letter(
     id int not null auto_increment primary key,
     alphabet_letter char(1) not null,
+    time_stamp timestamp not null default current_timestamp,
+    votes int not null default 0,
     user_id int not null,
     question_id int not null,
-    foreign key (user_id) references user(id),
-    foreign key (question_id) references question(id)
+    sub_letter_id int,
+    foreign key (user_id) references user(id) on delete cascade,
+    foreign key (question_id) references question(id) on delete cascade,
+    foreign key (sub_letter_id) references letter(id) on delete cascade
 );
 -- relations
-create table add_letter(
-    user_id int not null,
-    letter_id int not null,
-    time_stamp varchar(255) not null,
-    foreign key (user_id) references user(id),
-    foreign key (letter_id) references letter(id)
-);
 create table submit(
     user_id int not null,
     question_id int not null,
-    time_stamp varchar(255) not null,
+    time_stamp timestamp not null default current_timestamp,
     foreign key (user_id) references user(id),
     foreign key (question_id) references question(id)
 );
-create table sub_letter(
+create table vote(
+    user_id int not null,
     letter_id int not null,
+    foreign key (user_id) references user(id),
     foreign key (letter_id) references letter(id)
 );
+
+-- insert data into database (temporary data for testing if needed)
+insert into user(username, email, password) values('HaroldFanBoy', 'raj@case.edu', 'Javadoc');
+insert into user(username, email, password) values('Chris321', 'chris123@case.edu', 'Inside');
+insert into user(username, email, password) values('CWRUfan', 'organizer@case.edu', 'DivinityTho');
+insert into user(username, email, password) values('Babs', 'helloworld@case.edu', 'Password');
+insert into user(username, email, password) values('JosephJoeStarII', 'johnson@case.edu', 'Databases');
+
+insert into question(content, category, user_id) values('Are Javadoc comments the coolest thing ever?', 'Advice', 1);
+insert into question(content, category, user_id) values('Is EECS 341 not the greatest class ever?', 'Humor', 4);
+
+insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('Y', 2, 2, null);
+insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('E', 2, 2, 1);
+insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('T', 2, 2, 1);
+insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('E', 4, 1, 2);
+insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('O', 1, 2, 3);
+insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values('K', 2, 2, 4);

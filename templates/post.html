@@ -1,25 +1,33 @@
-<!-- Only meant to be accessed by authorized users -->
-<!-- Displays site statistics                      -->
+<!-- Page for viewing all of the answers for a question -->
+<!-- jquery-comment github: https://github.com/Viima/jquery-comments -->
 
 <!DOCTYPE html>
+
 <html>
     <head>
-        <title>Statistics</title>
+        <title>Sham Answers</title>
         <meta charset="utf-8">
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" ></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
         <link href="https://bootswatch.com/4/journal/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
+        <!-- Data -->
+		<script type="text/javascript" src="data/comments-data.js"></script>
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/jquery-comments.css">
+
     </head>
     <body>
 
             <!-- Creates the navigation bar, and references to respective pages-->
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65037E;">
-                <a class="navbar-brand" href="main">Sham Answers</a>
+                <a class="navbar-brand" href="/main">Sham Answers</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -40,28 +48,44 @@
                 <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
-            <!-- Creates table that displays website statistics from queries in run.py -->
-            <table class="table table-striped">
-                <thread>
-                    <tr>
-                        <th scope="col">Users</th>
-                        <th scope="col">Questions</th>
-                        <th scope="col">Comments</th>
-                        <th scope="col">Complete Answers</th>
-                        <th scope="col">Average # of Questions Per User</th>
-                        <th scope="col">Average # of Comments Per User</th>
-                    </tr>
-                </thread>
-                <tbody>
-                <tr>
-                    <td>{{ totals.user }}</td>
-                    <td>{{ totals.question }}</td>
-                    <td>{{ totals.comment }}</td>
-                    <td>{{ totals.complete_comment}}</td>
-                    <td>{{ totals.avg_question}}</td>
-                    <td>{{ totals.avg_comment}}</td>
-                </tr>
-                </tbody>
-            </table>
+            <!-- Displays the question, its author, and its category -->
+            <div class="container">
+
+                <br>
+                <h1 align="center">   </h1>
+                <hr/>
+
+                <div class="col col-md-4">Question: {{ post }}</div>
+                <div class="col col-md-4">By: {{ author }}</div>
+                <div class="col col-md-4">Category: {{ category }}</div>
+
+                <br>
+                <h1 align="center">   </h1>
+                <hr/>
+
+                <form class="form" method="post">
+                    <fieldset>
+			<div class="row">
+                            <div class="form-group col-md">
+                                <input name="text" type="text" name="letter" maxlength="2" size="2"><br>
+                            </div>
+			</div>
+		    </fieldset>
+		   <div class="col col-md-4">Answer</div>
+			{%for first_letter in comments%}
+			    {%for letter_row in first_letter%}
+				<div class = "form-row">
+				    {%for letter in letter_row%}
+					<div class = "column">
+						<input name={{letter["Id"]}} type="submit" value ={{letter["content"]}}  class="btn btn-secondary"/>
+					</div>
+				    {%endfor%}
+				</div>
+			    {%endfor%}
+			    <br/>
+			{%endfor%}
+			<input name=None type="submit" value="New word start" class="btn btn-secondary"/>
+		   </div>
+		</form>
     </body>
 </html>
