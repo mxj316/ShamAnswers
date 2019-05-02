@@ -221,9 +221,14 @@ def post(question):
     query_params = [(question,)]
     letter_data = sql_query(sql, *query_params)
     if request.method == 'POST':
-        sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
-        query_params = [(request.form['text'], session['id'], question, list(request.form.keys())[1])]
-        sql_execute(sql, *query_params)
+        if request.form.keys()[1] == "None":
+            sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
+            query_params = [(request.form['text'], session['id'], question, None)]
+            sql_execute(sql, *query_params)
+        else:
+            sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
+            query_params = [(request.form['text'], session['id'], question, list(request.form.keys()[1]))]
+            sql_execute(sql, *query_params)
         return redirect(url_for('post', question = question))
     letter_dicts = []
     template_data = []
