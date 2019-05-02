@@ -33,12 +33,12 @@
                     replyText: 'Answer',
                     getUsers: function(success, error) {
                         setTimeout(function() {
-                            success(usersArray);
+                            success({{ letter_data['creator'] }});
                         }, 500);
                     },
                     getComments: function(success, error) {
                         setTimeout(function() {
-                            success(commentsArray);
+                            success({{ letter_data['content'] }});
                         }, 500);
                     },
                     postComment: function(data, success, error) {
@@ -112,6 +112,15 @@
 
         <!-- Shows structure of answers -->
 		<div id="comments-container"></div>
+
+        <div class="container">
+            {% for letter_data in comments %}
+                <script>
+                    document.write('<p id="' + {{ letter_data['id'] }} + '" name="' + {{ letter_data['creator'] }} + '" >{{ letter_data['content'] }} </p>')
+                </script>
+            {% endfor %}
+            
+        </div>
 
     </body>
 </html>
