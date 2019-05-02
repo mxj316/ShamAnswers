@@ -96,10 +96,10 @@
                     {% for question in posts %}
                         <script>
                             var qString = {{ question['number'] }};
-                            var pString = "";
+                            var "pString = ";
                             pString += "post/" + qString;
                             function loaded(){
-                                document.getElementById("post_page").innerHTML = pString;
+                                document.getElementById({{ question['number'] }}).href = pString;
                             }
                         </script>
                         <tr>
@@ -109,7 +109,7 @@
                             <td>
                                 <form action="">
                                     <body onload = loaded()>
-                                    <a class="btn btn-secondary"  href="post_page" role="button">Answer</a>
+                                    <a class="btn btn-secondary"  id={{ question['number'] }} href="post_page" role="button">Answer</a>
                                     </body>
                                 </form>
                                 </td>
