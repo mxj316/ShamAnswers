@@ -30,29 +30,26 @@ create table question(
 create table letter(
     id int not null auto_increment primary key,
     alphabet_letter char(1) not null,
+    time_stamp timestamp not null default current_timestamp,
     votes int not null default 0,
     user_id int not null,
     question_id int not null,
+    sub_letter_id int not null,
     foreign key (user_id) references user(id),
-    foreign key (question_id) references question(id)
+    foreign key (question_id) references question(id),
+    foreign key (sub_letter_id) references letter(id)
 );
 -- relations
-create table add_letter(
-    user_id int not null,
-    letter_id int not null,
-    time_stamp varchar(255) not null,
-    foreign key (user_id) references user(id),
-    foreign key (letter_id) references letter(id)
-);
 create table submit(
     user_id int not null,
     question_id int not null,
-    time_stamp varchar(255) not null,
+    time_stamp timestamp not null default current_timestamp,
     foreign key (user_id) references user(id),
     foreign key (question_id) references question(id)
 );
-create table sub_letter(
+create table vote(
+    user_id int not null,
     letter_id int not null,
+    foreign key (user_id) references user(id),
     foreign key (letter_id) references letter(id)
 );
-

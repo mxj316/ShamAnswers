@@ -12,47 +12,8 @@
         <link href="https://bootswatch.com/4/journal/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
-        <!-- Style for accordion posts-->
-        <style>
-            #accordion .panel-heading {
-                padding: 0;
-            }
 
-            #accordion .panel-title>a {
-                display: block;
-                padding: 0.6em 0.8em;
-                outline: none;
-                font-weight: bold;
-                text-decoration: none;
-            }
 
-            #accordion .panel-title>a.accordion-toggle::before, #accordion a[data-toggle="collapse"]::before
-            {
-                content: "\e113";
-                float: left;
-                font-family: 'Glyphicons Halflings';
-                margin-right: 1em;
-            }
-
-            #accordion .panel-title>a.accordion-toggle.collapsed::before, #accordion a.collapsed[data-toggle="collapse"]::before
-            {
-                content: "\e114";
-            }
-            #accordion.panel-group .panel{
-                margin-top: 10px;
-            }
-            #accordion .actions_div > a {
-                font-size: 14px;
-                margin-right: 15px;
-            }
-            #accordion .actions_div > a.exit-btn {
-                color:#dd4b39;
-            }
-            #accordion .remove_field.exit-btn{
-                color:#dd4b39;
-                margin-left:7px;
-                float: left;
-        </style>
     </head>
     <body>
 
@@ -90,22 +51,21 @@
                 <hr/>
 
                 </form>
-                <form action="form" method="post">
+                <form class="form" method="post">
                     <fieldset>
-                        <div class="input-group">
-                            <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
-                            <div class="input-group-append">
-
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="categories">Category</button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Humor</a>
-                                    <a class="dropdown-item" href="#">Advice</a>
-                                    <a class="dropdown-item" href="#">Dating</a>
-                                    <a class="dropdown-item" href="#">Sports </a>
-                                    <a class="dropdown-item" href="#">School</a>
-                                </div>
-                                <button type="button" class="btn btn-secondary">Post</button>
-                            </div>
+			<div class="row">
+			    <div class="form-group col-md">
+                                <input name="text" type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+			    </div>
+                            <div class="form-group column">
+			        <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="categories">
+				    <option value="humor"selected name=>Humor</option>
+				    <option value="advice">Advice</option>
+				    <option value="dating">Dating</option>
+				    <option value="sports">Sports</option>
+			            <option value="school">School</option>
+			        </select>
+                            <input name="submit" type="submit" value = "Post" class="btn btn-secondary"/>
                         </div>
                     </fieldset>
                 </form>
@@ -117,7 +77,7 @@
                         <option value="2">Alphabetically</option>
                         <option value="3">By Author</option>
                         <option value="4">By Category</option>
-                        <option value="5">By Number of Comments</option>
+			<option value="5">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
                 </form>
@@ -134,23 +94,34 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <script>
-                        {% for author, category, post, number in posts %}
+                        {% for question in posts %}
                             <tr>
-                                <td>{{ category }}</td>
-                                <td>{{ post }}</td>
-                                <td>{{ author }}</td>
+                                <td>{{ question['category'] }}</td>
+                                <td>{{ question['post'] }}</td>
+                                <td>{{ question['author'] }}</td>
                                 <td>
                                 <form action="">
-                                    <button type="submit" name="viewpost" class="btn btn-secondary" value={{ number }}>View/Comment</button>
+                                    <body onload = loaded()>
+                                        <input type="submit" name="view_post" class="btn btn-secondary" value="Answer" href="post_page" role={{ question['number'] }}>
+                                    </body>
+
                                 </form>
                                 </td>
                             </tr>
+				<script>
+				    var qString = {{ question['number'] }};
+				    var pString = "";
+				    pString += "post/" + qString;
+				    function loaded(){
+					document.getElementById("post_page").innerHTML = pString;
+				    }
+				</script>
                         {% endfor %}
-                    </script>
 
                     </tbody>
                 </table>
             </div>
+
+
     </body>
 </html>
