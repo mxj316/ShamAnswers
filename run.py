@@ -11,6 +11,7 @@ my_user = None  # will hold user id whene logged in
 # Set up application server.
 app = Flask(__name__)
 app.config.update(**config['app'])
+
 app.secret_key = os.urandom(24)
 
 # Create a function for fetching data from the database. Should also prevent SQL Injection with use of list parameter
@@ -244,7 +245,7 @@ def post(question):
             if letter["creator"] == session["id"]:
                 user_submitted = False
         if user_submitted:
-            if request.form.keys()[1] == "None":
+            if list(request.form.keys())[1] == "None":
                 sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
                 query_params = [(request.form['text'], session['id'], question, None)]
                 sql_execute(sql, *query_params)
