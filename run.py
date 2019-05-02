@@ -35,19 +35,31 @@ def sql_execute(sql, *query_params):
 def admin():
     sql = "select count(id) from user where username = '{username}' and admin is true".format(username = session['username'])
     admin_user = sql_query(sql)
-    if admin_user[0][0] > 0:
-    # if session['authorized'] == True:
+    if session['authorized'] == True or admin_user[0][0] > 0:
+        # Queries
         tot_users = "select count(id) from user"
         tot_questions = "select count(id) from question"
         tot_comments = "select count(id) from letter"
         comp_answers = "select count(id) from letter where votes > 5"
         avg_questions = "select avg(n) from(select count(q.id) as n from user u inner join question q on u.id=q.user_id group by u.id) as avg_questions"
         avg_comments = " select avg(n) from(select count(l.id) as n from user u inner join letter l on u.id=l.user_id group by u.id) as avg_comments"
-
-        # Render these queries onto webpage
-
+        # Save results in lists
+        sql_tot_users = sql_query(sql_tot_users)
+        sql_tot_questions = sql_query(sql_tot_questions)
+        sql_tot_comments = sql_query(sql_tot_comments)
+        sql_comp_answers = sql_query(sql_comp_answers)
+        sql_avg_questions = sql_query(sql_avg_questions)
+        sql_avg_comments = sql_query(sql_avg_comments)
+        # Put statistics in dictionary to be displayed on webpage
+        admin_stats = {"user":sql_tot_users[0][0],
+                    "question":sql_tot_questions[0][0],
+                    "comment":sql_tot_comments[0][0],
+                    "complete_comment":sql_comp_answers[0][0],
+                    "avg_question":sql_avg_questions[0][0],
+                    "avg_comment":sql_avg_comments[0][0]}
+        return render_template('admin.html', totals = admin_stats)
     else:
-        return render_template('admin.html', template_error = "You are trying to access information that requires administrative privileges. Please contact an admin for more informatiion")
+        return render_template('admin.html', template_error = "You do not have administrative privileges for accessing this information")
         return redirect(url_for('main'))
     return render_template('admin.html')
 
@@ -74,9 +86,9 @@ def createaccount():
                 return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
             # Choose a password
             password = request.form["password"]
-            # TODO: Decide how a user becomes an admin, and where in code this is to be done!
-            sql = "insert into user(username, email, password, admin) values('{username}', '{email}', '{password}', false)".format(username = session['username'], email = session['email'], password = password)
-            sql_execute(sql)
+            sql = "insert into user(username, email, password, admin) values(%s, %s, %s, %s)"
+            query_params = [(session['username'], session['email'], password)]
+            sql_execute(sql, *query_params)
             sql = "select last_insert_id()"
             user_id = sql_query(sql)
             session['id'] = user_id[0][0]
@@ -117,7 +129,6 @@ def logout():
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "GET":
-        # sql_execute(sql)
         sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                 from user u
                 inner join question q on u.id = q.user_id"""
@@ -177,7 +188,7 @@ def main():
                     from user u
                     inner join question q on u.id = q.user_id
                     inner join letter l on q.id = l.question_id
-                    group by u.username, q.content, q.category, q.time_stamp
+                    group by u.username, q.content, q.category, q.time_stamp, q.id
                     order by count(l.alphabet_letter) desc"""
             questions = sql_query(sql)
     template_data = [];
