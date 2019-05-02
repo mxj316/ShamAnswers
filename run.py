@@ -224,7 +224,7 @@ def post(question):
         sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
         query_params = [(request.form['text'], session['id'], question, request.form.keys()[1])]
         sql_execute(sql, *query_params)
-        return redirect(url_for('post/question'))
+        return redirect(url_for('post', question = question))
     letter_dicts = []
     template_data = []
     for row in letter_data:
