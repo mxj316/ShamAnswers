@@ -89,8 +89,10 @@ def createaccount():
 def delete_account():
     if request.method == "POST":
         if "Yes" in request.form:
-            sql = "delete * from user where id = '{user_id}'"
-            query_params = [user_id]
+            sql = "select id from user where username = '{username}'".format(username = session['username'])
+            user_id = sql_query(sql)
+            sql = "delete * from user where id = %s"
+            query_params = [(user_id[0][0],)]
             sql_execute(sql, *query_params)
             return redirect(url_for('start'))
         if "No" in request.form:
@@ -200,7 +202,7 @@ def start():
 def update_email():
     if request.method == "GET":
         sql = "select email from user where email = %s"
-        query_params = [(session['email'])]
+        query_params = [(session['email'],)]
         sql_execute(sql, *query_params)
     if request.method == "POST":
         new_email = request.form['new-email']
@@ -240,7 +242,7 @@ def update_password():
 def delete_username():
     if request.method == "GET":
         sql = "select username from user where username = %s"
-        query_params = [(session['username'])]
+        query_params = [(session['username'],)]
         sql_execute(sql, *query_params)
     if request.method == "POST":
         new_username = request.form['new-username']
