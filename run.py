@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config.update(**config['app'])
 app.secret_key = os.urandom(24)
 
-# Create a function for fetching data from the database.
+# Create a function for fetching data from the database. Should also prevent SQL Injection with use of list parameter
 def sql_query(sql, *query_params):
     db = mysql.connector.connect(**config['mysql.connector'])
     cursor = db.cursor(buffered = True)
@@ -36,7 +36,7 @@ def sql_execute(sql, *query_params):
 def admin():
     if not 'id' in session:
         return redirect(url_for('start'))
-    # Queries
+    # Queries for fetching data to compute statistics
     tot_users = "select count(id) from user"
     tot_questions = "select count(id) from question"
     tot_comments = "select count(id) from letter"
@@ -50,7 +50,7 @@ def admin():
     sql_comp_answers = sql_query(comp_answers, [])
     sql_avg_questions = sql_query(avg_questions, [])
     sql_avg_comments = sql_query(avg_comments, [])
-    # Put statistics in dictionary to be displayed on webpage
+    # Put statistics from lists into single dictionary to be displayed on webpage
     admin_stats = {"user":sql_tot_users[0][0],
                 "question":sql_tot_questions[0][0],
                 "comment":sql_tot_comments[0][0],
