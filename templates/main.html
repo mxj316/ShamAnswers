@@ -14,14 +14,6 @@
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
 
-        <script>
-            var qString = {{ question['number'] }};
-            var pString = "";
-            pString += "post/" + qString;
-            function loaded(){
-                document.getElementById("post_page").innerHTML = pString;
-            }
-        </script>
     </head>
     <body>
 
@@ -116,6 +108,14 @@
                                 </form>
                                 </td>
                             </tr>
+				<script>
+				    var qString = {{ question['number'] }};
+				    var pString = "";
+				    pString += "post/" + qString;
+				    function loaded(){
+					document.getElementById("post_page").innerHTML = pString;
+				    }
+				</script>
                         {% endfor %}
 
                     </tbody>
