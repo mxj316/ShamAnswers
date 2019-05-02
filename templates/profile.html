@@ -1,3 +1,5 @@
+<!-- Page for viewing your profile, and links to pages that change account information-->
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -11,6 +13,7 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
+        <!-- Style settings -->
         <style>
             .font_control
             {
@@ -23,7 +26,6 @@
                 color:#000;
                 margin:10px;
             }
-
 
         </style>
     </head>
@@ -41,21 +43,20 @@
                         <li class="nav-item">
                             <a class="nav-link" href="profile">My Profile</a>
                         </li>
-                        <script>
                             {% if authorized %}
-                            <li class="nav-item">
+                                <li class="nav-item">
                                 <a class="nav-link" href="admin">Admin</a>
-                            </li>
+                                </li>
                             {% endif %}
-                        </script>
                         <li class="nav-item">
                             <a class="nav-link" href="logout">Logout</a>
                         </li>
                     </ul>
                 </div>
-                    <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
+                <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
+            <!-- Displays current account settings -->
             <div class="w-25 font_control">
                 <h5>
                     <div class="control">My Account Details</div>
@@ -65,7 +66,8 @@
                 <div class="label">Username: </div>
                 <p>{{ profile.username }}</p>
             </div>
-
+            <div>
+                <!-- Links to pages that change the account settings -->
                 <h5>
                     <div class="control">Settings</div>
                 </h5>
@@ -80,6 +82,10 @@
 
                 <div class="row font_control">
                     <a class="btn btn-secondary" href="updatepassword" role="button">Change Password</a>
+                </div>
+
+                <div class="row font_control">
+                    <a class="btn btn-secondary" href="deleteaccount" role="button">Delete Account</a>
                 </div>
             </div>
     </body>

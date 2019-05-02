@@ -1,6 +1,6 @@
+<!-- Main page for submitting and viewing questions -->
+
 <!DOCTYPE html>
-
-
 <html>
     <head>
         <title>Sham Answers</title>
@@ -13,11 +13,10 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
 
-
     </head>
     <body>
 
-            <!-- Creates the navigation bar, and references to respective pages-->
+            <!-- Creates the navigation bar, and references to respective pages -->
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #65037E;">
                 <a class="navbar-brand" href="/main">Sham Answers</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,21 +28,21 @@
                         <li class="nav-item">
                             <a class="nav-link" href="profile">My Profile</a>
                         </li>
-                        <script>
                             {% if authorized %}
-                            <li class="nav-item">
+                                <li class="nav-item">
                                 <a class="nav-link" href="admin">Admin</a>
-                            </li>
+                                </li>
                             {% endif %}
-                        </script>
                         <li class="nav-item">
                             <a class="nav-link" href="logout">Logout</a>
                         </li>
                     </ul>
                 </div>
-                    <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
+                <a style='font-size:24px' class='fab' href="https://github.com/mxj316/ShamAnswers">&#xf09b;</a>
             </nav>
 
+            <!-- Input text box for submitting questions, and a dropdown menu for -->
+            <!-- sorting questions                                                -->
             <div class="container">
 
                 <br>
@@ -53,20 +52,20 @@
                 </form>
                 <form class="form" method="post">
                     <fieldset>
-			<div class="row">
-			    <div class="form-group col-md">
+                        <div class="row">
+                            <div class="form-group col-md">
                                 <input name="text" type="text" class="form-control" aria-label="Text input with segmented dropdown button">
-			    </div>
+                            </div>
                             <div class="form-group column">
-			        <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="categories">
-				    <option value="humor"selected name=>Humor</option>
-				    <option value="advice">Advice</option>
-				    <option value="dating">Dating</option>
-				    <option value="sports">Sports</option>
-			            <option value="school">School</option>
-			        </select>
-                            <input name="submit" type="submit" value = "Post" class="btn btn-secondary"/>
-                        </div>
+                                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="categories">
+                                    <option value="humor"selected name=>Humor</option>
+                                    <option value="advice">Advice</option>
+                                    <option value="dating">Dating</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="school">School</option>
+                                </select>
+                                <input name="submit" type="submit" value = "Post" class="btn btn-secondary"/>
+                            </div>
                     </fieldset>
                 </form>
 
@@ -77,12 +76,14 @@
                         <option value="2">Alphabetically</option>
                         <option value="3">By Author</option>
                         <option value="4">By Category</option>
-			<option value="5">By Number of Comments</option>
+                        <option value="5">By Number of Comments</option>
                     </select>
                     <button type="submit" class="btn btn-secondary my-1">Sort</button>
                 </form>
             </div>
 
+            <!-- Creates table that displays questions, along with their author,  -->
+            <!-- category, and a button to view/add answers                       -->
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -94,34 +95,31 @@
                     </tr>
                     </thead>
                     <tbody>
-                        {% for question in posts %}
-                            <tr>
-                                <td>{{ question['category'] }}</td>
-                                <td>{{ question['post'] }}</td>
-                                <td>{{ question['author'] }}</td>
-                                <td>
+                    {% for question in posts %}
+                        <script>
+                            var qString = {{ question['number'] }};
+                            var pString = "";
+                            pString += "post/" + qString;
+                            function loaded(){
+                                document.getElementById("post_page").innerHTML = pString;
+                            }
+                        </script>
+                        <tr>
+                            <td>{{ question['category'] }}</td>
+                            <td>{{ question['post'] }}</td>
+                            <td>{{ question['author'] }}</td>
+                            <td>
                                 <form action="">
                                     <body onload = loaded()>
-                                        <input type="submit" name="view_post" class="btn btn-secondary" value="Answer" href="post_page" role={{ question['number'] }}>
+                                    <a class="btn btn-secondary"  href="post_page" role="button">Answer</a>
                                     </body>
-
                                 </form>
                                 </td>
                             </tr>
-				<script>
-				    var qString = {{ question['number'] }};
-				    var pString = "";
-				    pString += "post/" + qString;
-				    function loaded(){
-					document.getElementById("post_page").innerHTML = pString;
-				    }
-				</script>
                         {% endfor %}
-
                     </tbody>
                 </table>
             </div>
-
-
+            </div>
     </body>
 </html>
