@@ -31,6 +31,7 @@ def sql_execute(sql, *query_params):
     cursor.close()
     db.close()
 
+# User can view basic site statistics (demonstrates some aggregate queries)
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     # Queries
@@ -108,6 +109,7 @@ def delete_account():
             return redirect(url_for('main'))
     return render_template('deleteaccount.html')
 
+# User can logout from their account
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     print(request.form)
@@ -121,6 +123,7 @@ def logout():
             return redirect(url_for('main'))
     return render_template('logout.html')
 
+# The main page
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == "GET":
@@ -144,7 +147,6 @@ def main():
                         from user u
                         inner join question q on u.id = q.user_id"""
                 questions = sql_query(sql, [])
-                # Render the data on the website
 
         # User sorts questions by date posted / timestamp
         elif request.form["sorting"] == "1":
@@ -193,6 +195,7 @@ def main():
     print(template_data)
     return render_template('main.html', posts=template_data)
 
+# User is linked to a page containing the chosen question and its associated comments
 @app.route('/post/<question>', methods=['GET', 'POST'])
 def post(question):
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
@@ -215,10 +218,12 @@ def post(question):
             template_data.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
     return render_template('post.html', comments = template_data)
 
+# User can view basic profile information and update their email, username or password, and delete their account
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     return render_template('profile.html', profile = session)
 
+# User is directed to the start page upon loading the website
 @app.route('/', methods=['GET', 'POST'])
 def start():
     if request.method == "POST":
