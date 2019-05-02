@@ -63,39 +63,28 @@
                 <h1 align="center">   </h1>
                 <hr/>
 
-                <div class="col col-md-4">Answer</div>
-		{%for first_letter in comments%}
-		    {%for letter_row in first_letter%}
-			<div class = "row">
-			    {%for letter in letter_row%}
-				<div class = "column">
-					{{letter["content"]}}
-				</div>
-			    {%endfor%}
-			</div>
-		    {%endfor%}
-		    <br/>
-		{%endfor%}
-	</ul>
-            </div>
-	<!-- Input text box for submitting answers -->
-                                                        
-            <div class="container">
-
-                <br>
-                <h1 align="center">   </h1>
-                <hr/>
-
-                </form>
                 <form class="form" method="post">
                     <fieldset>
-		<div class="row">
+			<div class="row">
                             <div class="form-group col-md">
                                 <input name="text" type="text" name="letter" maxlength="2" size="2"><br>
                             </div>
-	  <ul class="letters">
-        <!-- Shows structure of answers -->
-		<div id="comments-container"></div>
-
+			</div>
+		    </fieldset>
+		   <div class="col col-md-4">Answer</div>
+			{%for first_letter in comments%}
+			    {%for letter_row in first_letter%}
+				<div class = "row">
+				    {%for letter in letter_row%}
+					<div class = "column">
+						{{letter["content"]}}
+					</div>
+				    {%endfor%}
+				</div>
+			    {%endfor%}
+			    <br/>
+			{%endfor%}
+		   </div>
+		</form>
     </body>
 </html>
