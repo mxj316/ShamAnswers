@@ -220,14 +220,14 @@ def post(question):
                  group by l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username"""
     query_params = [(question,)]
     letter_data = sql_query(sql, *query_params)
-    if request.method == 'POST':
+    if request.method == 'POST' and strlen(request.form['text']) == 1:
         if request.form.keys()[1] == "None":
             sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
             query_params = [(request.form['text'], session['id'], question, None)]
             sql_execute(sql, *query_params)
         else:
             sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
-            query_params = [(request.form['text'], session['id'], question, list(request.form.keys()[1]))]
+            query_params = [(request.form['text'], session['id'], question, list(request.form.keys())[1])]
             sql_execute(sql, *query_params)
         return redirect(url_for('post', question = question))
     letter_dicts = []
