@@ -33,23 +33,30 @@ def sql_execute(sql, *query_params):
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    sql = "select count(id) from user where username = '{username}' and admin is true".format(username = session['username'])
-    admin_user = sql_query(sql)
-    if admin_user[0][0] > 0:
-    # if session['authorized'] == True:
-        tot_users = "select count(id) from user"
-        tot_questions = "select count(id) from question"
-        tot_comments = "select count(id) from letter"
-        comp_answers = "select count(id) from letter where votes > 5"
-        avg_questions = "select avg(n) from(select count(q.id) as n from user u inner join question q on u.id=q.user_id group by u.id) as avg_questions"
-        avg_comments = " select avg(n) from(select count(l.id) as n from user u inner join letter l on u.id=l.user_id group by u.id) as avg_comments"
-
-        # Render these queries onto webpage
-
-    else:
-        return render_template('admin.html', template_error = "You are trying to access information that requires administrative privileges. Please contact an admin for more informatiion")
-        return redirect(url_for('main'))
-    return render_template('admin.html')
+    if not 'id' in session:
+        return redirect(url_for('start'))
+    # Queries
+    tot_users = "select count(id) from user"
+    tot_questions = "select count(id) from question"
+    tot_comments = "select count(id) from letter"
+    comp_answers = "select count(id) from letter where votes > 5"
+    avg_questions = "select avg(n) from(select count(q.id) as n from user u left outer join question q on u.id=q.user_id group by u.id) as avg_questions"
+    avg_comments = "select avg(n) from(select count(l.id) as n from user u left outer join letter l on u.id=l.user_id group by u.id) as avg_comments"
+    # Save results in lists
+    sql_tot_users = sql_query(tot_users)
+    sql_tot_questions = sql_query(tot_questions)
+    sql_tot_comments = sql_query(tot_comments)
+    sql_comp_answers = sql_query(comp_answers)
+    sql_avg_questions = sql_query(avg_questions)
+    sql_avg_comments = sql_query(avg_comments)
+    # Put statistics in dictionary to be displayed on webpage
+    admin_stats = {"user":sql_tot_users[0][0],
+                "question":sql_tot_questions[0][0],
+                "comment":sql_tot_comments[0][0],
+                "complete_comment":sql_comp_answers[0][0],
+                "avg_question":sql_avg_questions[0][0],
+                "avg_comment":sql_avg_comments[0][0]}
+    return render_template('admin.html', totals = admin_stats)
 
 # User can create an account
 @app.route('/createaccount', methods=['GET', 'POST'])
@@ -74,9 +81,9 @@ def createaccount():
                 return render_template('createaccount.html', template_error = "Could not create account: username is part of another account")
             # Choose a password
             password = request.form["password"]
-            # TODO: Decide how a user becomes an admin, and where in code this is to be done!
-            sql = "insert into user(username, email, password, admin) values('{username}', '{email}', '{password}', false)".format(username = session['username'], email = session['email'], password = password)
-            sql_execute(sql)
+            sql = "insert into user(username, email, password, admin) values(%s, %s, %s, %s)"
+            query_params = [(session['username'], session['email'], password)]
+            sql_execute(sql, *query_params)
             sql = "select last_insert_id()"
             user_id = sql_query(sql)
             session['id'] = user_id[0][0]
@@ -88,10 +95,14 @@ def createaccount():
 # User can delete an account
 @app.route('/deleteaccount', methods=['GET', 'POST'])
 def delete_account():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "POST":
         if "Yes" in request.form:
-            sql = "delete * from user where id = '{user_id}'"
-            query_params = [user_id]
+            sql = "select id from user where username = '{username}'".format(username = session['username'])
+            user_id = sql_query(sql)
+            sql = "delete * from user where id = %s"
+            query_params = [(user_id[0][0],)]
             sql_execute(sql, *query_params)
             return redirect(url_for('start'))
         if "No" in request.form:
@@ -100,12 +111,12 @@ def delete_account():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    print(request.form)
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if "returnhome" in request.form:
         if request.form["returnhome"] == "Yes":
             session.pop("username", None)
             session.pop("email", None)
-            session.pop("authorized", None)
             session.pop("id", None)
             return redirect(url_for('start'))
         if request.form["returnhome"] == "No":
@@ -114,8 +125,9 @@ def logout():
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "GET":
-        # sql_execute(sql)
         sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                 from user u
                 inner join question q on u.id = q.user_id"""
@@ -175,17 +187,18 @@ def main():
                     from user u
                     inner join question q on u.id = q.user_id
                     inner join letter l on q.id = l.question_id
-                    group by u.username, q.content, q.category, q.time_stamp
+                    group by u.username, q.content, q.category, q.time_stamp, q.id
                     order by count(l.alphabet_letter) desc"""
             questions = sql_query(sql)
     template_data = [];
     for row in questions:
         template_data.append({"author": row[0], "post": row[1], "category": row[2], "number": row[4]})
-    print(template_data)
     return render_template('main.html', posts=template_data)
 
 @app.route('/post/<question>', methods=['GET', 'POST'])
 def post(question):
+    if not 'id' in session:
+        return redirect(url_for('start'))
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
@@ -206,6 +219,8 @@ def post(question):
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     return render_template('profile.html', profile = session)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -216,7 +231,7 @@ def start():
         if len(result) == 1:
             session['username'] = result[0][0]
             session['email'] = result[0][1]
-            session['id'] = result[0][1]
+            session['id'] = result[0][2]
             return redirect(url_for('main'))
         else:
             return render_template('start.html', template_error="Could not login: incorrect username or password")
@@ -225,9 +240,11 @@ def start():
 # User can update their email
 @app.route('/updateemail', methods=['GET', 'POST'])
 def update_email():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "GET":
         sql = "select email from user where email = %s"
-        query_params = [(session['email'])]
+        query_params = [(session['email'],)]
         sql_execute(sql, *query_params)
     if request.method == "POST":
         new_email = request.form['new-email']
@@ -246,6 +263,8 @@ def update_email():
 # User can update their password
 @app.route('/updatepassword', methods=['GET', 'POST'])
 def update_password():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "POST":
         if request.form['new-password'] == request.form['retype-new-password']:
             sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
@@ -265,9 +284,11 @@ def update_password():
 # User can update their username
 @app.route('/updateusername', methods=['GET', 'POST'])
 def delete_username():
+    if not 'id' in session:
+        return redirect(url_for('start'))
     if request.method == "GET":
         sql = "select username from user where username = %s"
-        query_params = [(session['username'])]
+        query_params = [(session['username'],)]
         sql_execute(sql, *query_params)
     if request.method == "POST":
         new_username = request.form['new-username']
