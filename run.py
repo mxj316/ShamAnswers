@@ -215,7 +215,7 @@ def post(question):
     sql = """select l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username, count(v.letter_id)
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
-                 inner join vote v on v.letter_id = l.id
+                 left join vote v on v.letter_id = l.id
                  where q.id = %s
                  group by l.id, l.sub_letter_id, l.time_stamp, l.alphabet_letter, u.id, u.username"""
     query_params = [(question,)]
@@ -224,19 +224,20 @@ def post(question):
         letter=request.form['text']
     letter_dicts = []
     template_data = []
+    print(letter_data)
     for row in letter_data:
-        sql = "select v.user_id from vote where v.letter_id = %s and v.user_id = %s"
+        sql = "select v.user_id from vote v where v.letter_id = %s and v.user_id = %s"
         query_params = [(row[0], session['id'])]
         result = sql_query(sql, *query_params)
         if(len(result) > 0):
             user_vote = True
         else:
             user_vote = False
-        letter_dicts.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
-        if len(letter_dicts > 0):
-            for letter in letter_dicts:
-                if letter["parent"] == None:
-                    template_data.append(find_next_letter(letter_dicts, [letter]))
+        letter_dicts.append({"Id": row[0], "parent": row[1], "created": row[2], "content": row[3], "creator": row[4], "fullname": row[5], "upvote_count": row[6], "user_has_upvoted": user_vote})
+    if len(letter_dicts) > 0:
+        for letter in letter_dicts:
+            if letter["parent"] == None:
+                template_data.append(find_next_letter(letter_dicts, [letter]))
     sql = """select q.content, u.username, q.category
      from question q inner join user u on q.user_id = u.id
      where q.id = %s"""
@@ -254,7 +255,7 @@ def find_next_letter(letter_data, prior_data):
     for letter in letter_data:
         if letter["parent"] == parent_id:
             count += 1
-            new_chains = new_chains + find_next_letter(letter_data, prior_data.append(letter))
+            new_chains = new_chains + find_next_letter(letter_data, prior_data + [letter])
     if count == 0:
         new_chains.append(prior_data)
     return new_chains
