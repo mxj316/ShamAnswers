@@ -89,6 +89,7 @@
                         <th scope="col">Catagory</th>
                         <th scope="col">Post</th>
                         <th scope="col">Author</th>
+                        <th scope="col">Time</th>
                         <th scope="col"></th>
                     </tr>
                     </thead>
@@ -98,19 +99,17 @@
                             var qString = {{ question['number'] }};
                             var pString = "";
                             pString += "post/" + qString;
-                            function loaded(){
-                                document.getElementById("post_page").innerHTML = pString;
-                            }
+                                document.getElementById("button").href = pString;
+
                         </script>
                         <tr>
                             <td>{{ question['category'] }}</td>
                             <td>{{ question['post'] }}</td>
                             <td>{{ question['author'] }}</td>
+                            <td>{{ question['time'] }}</td>
                             <td>
                                 <form action="">
-                                    <body onload = loaded()>
-                                    <a class="btn btn-secondary"  href="post_page" role="button">Answer</a>
-                                    </body>
+                                    <a class="btn btn-secondary"  id="button" href="post/" role="button">Answer</a>
                                 </form>
                                 </td>
                             </tr>
