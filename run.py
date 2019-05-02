@@ -14,10 +14,10 @@ app.config.update(**config['app'])
 app.secret_key = os.urandom(24)
 
 # Create a function for fetching data from the database.
-def sql_query(sql):
+def sql_query(sql, *query_params):
     db = mysql.connector.connect(**config['mysql.connector'])
     cursor = db.cursor(buffered = True)
-    cursor.execute(sql)
+    cursor.execute(sql, *query_params)
     result = cursor.fetchall()
     cursor.close()
     db.close()
@@ -31,6 +31,7 @@ def sql_execute(sql, *query_params):
     cursor.close()
     db.close()
 
+# User can view basic site statistics (demonstrates some aggregate queries)
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if not 'id' in session:
@@ -43,12 +44,12 @@ def admin():
     avg_questions = "select avg(n) from(select count(q.id) as n from user u left outer join question q on u.id=q.user_id group by u.id) as avg_questions"
     avg_comments = "select avg(n) from(select count(l.id) as n from user u left outer join letter l on u.id=l.user_id group by u.id) as avg_comments"
     # Save results in lists
-    sql_tot_users = sql_query(tot_users)
-    sql_tot_questions = sql_query(tot_questions)
-    sql_tot_comments = sql_query(tot_comments)
-    sql_comp_answers = sql_query(comp_answers)
-    sql_avg_questions = sql_query(avg_questions)
-    sql_avg_comments = sql_query(avg_comments)
+    sql_tot_users = sql_query(tot_users, [])
+    sql_tot_questions = sql_query(tot_questions, [])
+    sql_tot_comments = sql_query(tot_comments, [])
+    sql_comp_answers = sql_query(comp_answers, [])
+    sql_avg_questions = sql_query(avg_questions, [])
+    sql_avg_comments = sql_query(avg_comments, [])
     # Put statistics in dictionary to be displayed on webpage
     admin_stats = {"user":sql_tot_users[0][0],
                 "question":sql_tot_questions[0][0],
@@ -65,16 +66,18 @@ def createaccount():
         if request.form['password'] == request.form['retype-password']:
             # Choose an email address, and check if it already exists in the database
             session['email'] = request.form["email"]
-            sql = "select count(email) from user where email = '{user_email}'".format(user_email = session['email'])
-            count_email = sql_query(sql)
+            sql = "select count(email) from user where email = %s"
+            query_params = [(session['email'],)]
+            count_email = sql_query(sql, *query_params)
             if count_email[0][0] > 0:
                 # Handle error if user inputs email that already exists in database
                 session.pop("email")
                 return render_template('createaccount.html', template_error = "Could not create account: email is part of another account")
             # Choose username, and check if it already exists in the database
             session['username'] = request.form["username"]
-            sql = "select count(username) from user where username = '{username}'".format(username = session['username'])
-            count_usernames = sql_query(sql)
+            sql = "select count(username) from user where username = %s"
+            query_params = [(session['username'],)]
+            count_usernames = sql_query(sql, *query_params)
             if count_usernames[0][0] > 0:
                 # Handle error if user inputs username that already exists in database
                 session.pop("username")
@@ -85,7 +88,7 @@ def createaccount():
             query_params = [(session['username'], session['email'], password)]
             sql_execute(sql, *query_params)
             sql = "select last_insert_id()"
-            user_id = sql_query(sql)
+            user_id = sql_query(sql, [])
             session['id'] = user_id[0][0]
             return redirect(url_for('main'))
         else:
@@ -99,7 +102,8 @@ def delete_account():
         return redirect(url_for('start'))
     if request.method == "POST":
         if "Yes" in request.form:
-            sql = "select id from user where username = '{username}'".format(username = session['username'])
+            sql = "select id from user where username = %s"
+            query_params = [(session['username'],)]
             user_id = sql_query(sql)
             sql = "delete * from user where id = %s"
             query_params = [(user_id[0][0],)]
@@ -109,6 +113,7 @@ def delete_account():
             return redirect(url_for('main'))
     return render_template('deleteaccount.html')
 
+# User can logout from their account
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     if not 'id' in session:
@@ -123,6 +128,7 @@ def logout():
             return redirect(url_for('main'))
     return render_template('logout.html')
 
+# The main page
 @app.route('/main', methods=['GET', 'POST'])
 def main():
     if not 'id' in session:
@@ -131,23 +137,23 @@ def main():
         sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                 from user u
                 inner join question q on u.id = q.user_id"""
-        questions = sql_query(sql)
+        questions = sql_query(sql, [])
     if request.method == "POST":
         # User creates a new question and it posts
         if "text" in request.form:
             question = request.form['text']
             category = request.form['categories']
-            sql = "select id from user where username = '{username}'".format(username = session['username'])
-            user_id = sql_query(sql)
-            sql = "insert into question(content, category, user_id, completed) values(%s, %s, %s, false)"
+            sql = "select id from user where username = %s"
+            query_params = [(session['username'],)]
+            user_id = sql_query(sql, *query_params)
+            sql = "insert into question(content, category, user_id) values(%s, %s, %s)"
             if "submit" in request.form:
                 query_params = [(question, category, user_id[0][0])]
                 sql_execute(sql, *query_params)
                 sql = """select u.username, q.content, q.category, q.time_stamp, q.id
                         from user u
                         inner join question q on u.id = q.user_id"""
-                questions = sql_query(sql)
-                # Render the data on the website
+                questions = sql_query(sql, [])
 
         # User sorts questions by date posted / timestamp
         elif request.form["sorting"] == "1":
@@ -155,7 +161,7 @@ def main():
                     from user u
                     inner join question q on u.id = q.user_id
                     order by q.time_stamp"""
-            questions = sql_query(sql)
+            questions = sql_query(sql, [])
 
         # User sorts questions alphabetically
         elif request.form["sorting"] == "2":
@@ -163,7 +169,7 @@ def main():
                     from user u
                     inner join question q on u.id = q.user_id
                     order by q.content"""
-            questions = sql_query(sql)
+            questions = sql_query(sql, [])
 
         # User sorts questions by author
         elif request.form["sorting"] == "3":
@@ -171,7 +177,7 @@ def main():
                     from user u
                     inner join question q on u.id = q.user_id
                     order by u.username"""
-            questions = sql_query(sql)
+            questions = sql_query(sql, [])
 
         # User sorts questions by categories
         elif request.form["sorting"] == "4":
@@ -179,7 +185,7 @@ def main():
                     from user u
                     inner join question q on u.id = q.user_id
                     order by q.category"""
-            questions = sql_query(sql)
+            questions = sql_query(sql, [])
 
         # User sorts questions by number of comments, descending order
         elif request.form["sorting"] == "5":
@@ -189,13 +195,13 @@ def main():
                     inner join letter l on q.id = l.question_id
                     group by u.username, q.content, q.category, q.time_stamp, q.id
                     order by count(l.alphabet_letter) desc"""
-            questions = sql_query(sql)
+            questions = sql_query(sql, [])
     template_data = [];
     for row in questions:
         template_data.append({"author": row[0], "post": row[1], "category": row[2], "time": row[3], "number": row[4]})
-    print(template_data)
     return render_template('main.html', posts=template_data)
 
+# User is linked to a page containing the chosen question and its associated comments
 @app.route('/post/<question>', methods=['GET', 'POST'])
 def post(question):
     if not 'id' in session:
@@ -204,13 +210,15 @@ def post(question):
                  from question q inner join letter l on l.question_id = q.id
                  inner join user u on l.user_id = u.id
                  inner join vote v on v.letter_id = l.id
-                 where q.id = '{current_question}'
-                 group by l.id""".format(current_question = question)
-    letter_data = sql_query(sql)
+                 where q.id = %s
+                 group by l.id"""
+    query_params = [(question)]
+    letter_data = sql_query(sql, *query_params)
     template_data = []
     for row in letter_data:
-        sql = "select v.user_id from vote where v.letter_id = '{current_letter}' and v.user_id = '{current_user}'".format(current_letter = row[0], current_user = session['id'])
-        result = sql_query(sql)
+        sql = "select v.user_id from vote where v.letter_id = %s and v.user_id = %s"
+        query_params = [(row[0], session['id'])]
+        result = sql_query(sql, *query_params)
         if(len(result) > 0):
             user_vote = True
         else:
@@ -218,17 +226,20 @@ def post(question):
             template_data.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
     return render_template('post.html', comments = template_data)
 
+# User can view basic profile information and update their email, username or password, and delete their account
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if not 'id' in session:
         return redirect(url_for('start'))
     return render_template('profile.html', profile = session)
 
+# User is directed to the start page upon loading the website
 @app.route('/', methods=['GET', 'POST'])
 def start():
     if request.method == "POST":
-        sql = "select username, email, id from user where user.email='{email}' and user.password='{password}'".format(email = request.form['email'], password = request.form['password'])
-        result = sql_query(sql)
+        sql = "select username, email, id from user where user.email = %s and user.password = %s"
+        query_params = [(request.form['email'], request.form['password'])]
+        result = sql_query(sql, *query_params)
         if len(result) == 1:
             session['username'] = result[0][0]
             session['email'] = result[0][1]
@@ -249,8 +260,9 @@ def update_email():
         sql_execute(sql, *query_params)
     if request.method == "POST":
         new_email = request.form['new-email']
-        sql = "select count(email) from user where email = '{email}'".format(email = new_email)
-        count_email = sql_query(sql)
+        sql = "select count(email) from user where email = %s"
+        query_params = [(new_email,)]
+        count_email = sql_query(sql, *query_params)
         if count_email[0][0] > 0:
             # Handle error if user inputs email that already exists in database
             return render_template('updateemail.html', template_error = "Could not update email: email is already a part of another account", profile = session)
@@ -268,8 +280,9 @@ def update_password():
         return redirect(url_for('start'))
     if request.method == "POST":
         if request.form['new-password'] == request.form['retype-new-password']:
-            sql = "select count(username) from user where email = '{email}' and password='{password}'".format(email = session["email"], password = request.form['old-password'])
-            count = sql_query(sql)
+            sql = "select count(username) from user where email = %s and password = %s"
+            query_params = [(session["email"], request.form['old-password'])]
+            count = sql_query(sql, *query_params)
             print(count)
             if count[0][0] == 1:
                 sql = "update user set password = %s where password = %s"
@@ -293,8 +306,9 @@ def delete_username():
         sql_execute(sql, *query_params)
     if request.method == "POST":
         new_username = request.form['new-username']
-        sql = "select count(username) from user where username = '{username}'".format(username = new_username)
-        count_usernames = sql_query(sql)
+        sql = "select count(username) from user where username = %s"
+        query_params = [(new_username,)]
+        count_usernames = sql_query(sql, *query_params)
         if count_usernames[0][0] > 0:
             # Handle error if user inputs username that already exists in database
             return render_template("updateusername.html", template_error = "Could not update username: username is already in use", profile = session)
