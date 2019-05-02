@@ -221,10 +221,12 @@ def post(question):
     query_params = [(question,)]
     letter_data = sql_query(sql, *query_params)
     if request.method == 'POST':
-        letter=request.form['text']
+        sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
+        query_params = [(request.form['text'], session['id'], question, request.form.keys()[1])]
+        sql_execute(sql, *query_params)
+        return redirect(url_for('post/question'))
     letter_dicts = []
     template_data = []
-    print(letter_data)
     for row in letter_data:
         sql = "select v.user_id from vote v where v.letter_id = %s and v.user_id = %s"
         query_params = [(row[0], session['id'])]
@@ -317,7 +319,6 @@ def update_password():
             sql = "select count(username) from user where email = %s and password = %s"
             query_params = [(session["email"], request.form['old-password'])]
             count = sql_query(sql, *query_params)
-            print(count)
             if count[0][0] == 1:
                 sql = "update user set password = %s where password = %s"
                 query_params = [(request.form['new-password'], request.form['old-password'])]
