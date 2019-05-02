@@ -233,10 +233,13 @@ def post(question):
         else:
             user_vote = False
         letter_dicts.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
-        if len(letter_dicts > 0):
+        if len(letter_dicts) > 0:
             for letter in letter_dicts:
                 if letter["parent"] == None:
                     template_data.append(find_next_letter(letter_dicts, [letter]))
+    #sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
+    #query_params = [(, session['id'], question_data[0][0], parent_id)]
+    #sql_execute(sql, *query_params)
     sql = """select q.content, u.username, q.category
      from question q inner join user u on q.user_id = u.id
      where q.id = %s"""
