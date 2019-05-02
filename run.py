@@ -217,6 +217,7 @@ def post(question):
     letter_data = sql_query(sql, *query_params)
     if request.method == 'POST':
         letter=request.form['text']
+    letter_dicts = []
     template_data = []
     for row in letter_data:
         sql = "select v.user_id from vote where v.letter_id = %s and v.user_id = %s"
@@ -226,13 +227,32 @@ def post(question):
             user_vote = True
         else:
             user_vote = False
-            template_data.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
+        letter_dicts.append({"Id": letter_data[0], "parent": letter_data[1], "created": letter_data[2], "content": letter_data[3], "creator": letter_data[4], "fullname": letter_data[5], "upvote_count": letter_data[6], "user_has_upvoted": user_vote})
+        if len(letter_dicts > 0):
+            for letter in letter_dicts:
+                if letter["parent"] == None:
+                    template_data.append(find_next_letter(letter_dicts, [letter]))
     sql = """select q.content, u.username, q.category
-             from question q inner join user u on q.user_id = u.id
-             where q.id = %s"""
+     from question q inner join user u on q.user_id = u.id
+     where q.id = %s"""
     query_params = [(question,)]
     question_data = sql_query(sql, *query_params)
-    return render_template('post.html', comments = template_data, post = question_data[0][0], author = question_data[0][1], category = question_data[0][2])
+    if len(question_data) == 1:
+        return render_template('post.html', comments = template_data, post = question_data[0][0], author = question_data[0][1], category = question_data[0][2])
+    else:
+        return render_template('post.html', comments = template_data)
+
+def find_next_letter(letter_data, prior_data):
+    count = 0
+    parent_id = prior_data[-1]["Id"]
+    new_chains = []
+    for letter in letter_data:
+        if letter["parent"] == parent_id:
+            count += 1
+            new_chains = new_chains + find_next_letter(letter_data, prior_data.append(letter))
+    if count == 0:
+        new_chains.append(prior_data)
+    return new_chains
 
 # User can view basic profile information and update their email, username or password, and delete their account
 @app.route('/profile', methods=['GET', 'POST'])
