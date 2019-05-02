@@ -96,11 +96,10 @@
                     {% for question in posts %}
                         <script>
                             var qString = {{ question['number'] }};
-                            var "pString = ";
+                            var pString = "";
                             pString += "post/" + qString;
-                            function loaded(){
-                                document.getElementById({{ question['number'] }}).href = pString;
-                            }
+                                document.getElementById("button").href = pString;
+
                         </script>
                         <tr>
                             <td>{{ question['category'] }}</td>
@@ -108,9 +107,7 @@
                             <td>{{ question['author'] }}</td>
                             <td>
                                 <form action="">
-                                    <body onload = loaded()>
-                                    <a class="btn btn-secondary"  id={{ question['number'] }} href="post_page" role="button">Answer</a>
-                                    </body>
+                                    <a class="btn btn-secondary"  id="button" href="post/" role="button">Answer</a>
                                 </form>
                                 </td>
                             </tr>
