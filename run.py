@@ -33,35 +33,28 @@ def sql_execute(sql, *query_params):
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    sql = "select count(id) from user where username = '{username}' and admin is true".format(username = session['username'])
-    admin_user = sql_query(sql)
-    if session['authorized'] == True or admin_user[0][0] > 0:
-        # Queries
-        tot_users = "select count(id) from user"
-        tot_questions = "select count(id) from question"
-        tot_comments = "select count(id) from letter"
-        comp_answers = "select count(id) from letter where votes > 5"
-        avg_questions = "select avg(n) from(select count(q.id) as n from user u inner join question q on u.id=q.user_id group by u.id) as avg_questions"
-        avg_comments = " select avg(n) from(select count(l.id) as n from user u inner join letter l on u.id=l.user_id group by u.id) as avg_comments"
-        # Save results in lists
-        sql_tot_users = sql_query(sql_tot_users)
-        sql_tot_questions = sql_query(sql_tot_questions)
-        sql_tot_comments = sql_query(sql_tot_comments)
-        sql_comp_answers = sql_query(sql_comp_answers)
-        sql_avg_questions = sql_query(sql_avg_questions)
-        sql_avg_comments = sql_query(sql_avg_comments)
-        # Put statistics in dictionary to be displayed on webpage
-        admin_stats = {"user":sql_tot_users[0][0],
-                    "question":sql_tot_questions[0][0],
-                    "comment":sql_tot_comments[0][0],
-                    "complete_comment":sql_comp_answers[0][0],
-                    "avg_question":sql_avg_questions[0][0],
-                    "avg_comment":sql_avg_comments[0][0]}
-        return render_template('admin.html', totals = admin_stats)
-    else:
-        return render_template('admin.html', template_error = "You do not have administrative privileges for accessing this information")
-        return redirect(url_for('main'))
-    return render_template('admin.html')
+    # Queries
+    tot_users = "select count(id) from user"
+    tot_questions = "select count(id) from question"
+    tot_comments = "select count(id) from letter"
+    comp_answers = "select count(id) from letter where votes > 5"
+    avg_questions = "select avg(n) from(select count(q.id) as n from user u left outer join question q on u.id=q.user_id group by u.id) as avg_questions"
+    avg_comments = "select avg(n) from(select count(l.id) as n from user u left outer join letter l on u.id=l.user_id group by u.id) as avg_comments"
+    # Save results in lists
+    sql_tot_users = sql_query(tot_users)
+    sql_tot_questions = sql_query(tot_questions)
+    sql_tot_comments = sql_query(tot_comments)
+    sql_comp_answers = sql_query(comp_answers)
+    sql_avg_questions = sql_query(avg_questions)
+    sql_avg_comments = sql_query(avg_comments)
+    # Put statistics in dictionary to be displayed on webpage
+    admin_stats = {"user":sql_tot_users[0][0],
+                "question":sql_tot_questions[0][0],
+                "comment":sql_tot_comments[0][0],
+                "complete_comment":sql_comp_answers[0][0],
+                "avg_question":sql_avg_questions[0][0],
+                "avg_comment":sql_avg_comments[0][0]}
+    return render_template('admin.html', totals = admin_stats)
 
 # User can create an account
 @app.route('/createaccount', methods=['GET', 'POST'])
@@ -119,7 +112,6 @@ def logout():
         if request.form["returnhome"] == "Yes":
             session.pop("username", None)
             session.pop("email", None)
-            session.pop("authorized", None)
             session.pop("id", None)
             return redirect(url_for('start'))
         if request.form["returnhome"] == "No":
@@ -229,7 +221,7 @@ def start():
         if len(result) == 1:
             session['username'] = result[0][0]
             session['email'] = result[0][1]
-            session['id'] = result[0][1]
+            session['id'] = result[0][2]
             return redirect(url_for('main'))
         else:
             return render_template('start.html', template_error="Could not login: incorrect username or password")
