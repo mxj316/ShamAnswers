@@ -33,7 +33,7 @@ create table letter(
     votes int not null default 0,
     user_id int not null,
     question_id int not null,
-    sub_letter_id int not null,
+    sub_letter_id int,
     foreign key (user_id) references user(id),
     foreign key (question_id) references question(id),
     foreign key (sub_letter_id) references letter(id)
