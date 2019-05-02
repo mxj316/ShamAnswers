@@ -82,36 +82,20 @@
                                 <input name="text" type="text" name="letter" maxlength="2" size="2"><br>
                             </div>
 	  <ul class="letters">
-	{%for letter in comments%}
-	<li>
-	<h2>{{letter.name}} </h2>
-	<!-- create class of ids to display-->
-	<ul class='id'>
-	{%for id in letter.id%}
-	<li>{{id}}</li>
-	<!-- create class of ids to display-->
-	<ul class='votes'>
-	{%for vote in letter.vote%}
-	<li>{{vote}}</li>
-	{%endfor%}
-	</ul>
-	</li>
-	{%endfor%}
-	</ul>
-	</li>
+	{%for first_letter in comments%}
+	    {%for letter_row in first_letter%}
+	        <div class = row>
+		    {%for letter in letter_row%}
+		        <div class = column>
+				{{letter["content"]}}
+			</div>
+		    {%endfor%}
+		</div>
+	    {%endfor%}
 	{%endfor%}
 	</ul>
         <!-- Shows structure of answers -->
 		<div id="comments-container"></div>
-
-        <div class="container">
-            {% for letter_data in comments %}
-                <script>
-                    document.write('<p id="' + {{ letter_data['id'] }} + '" name="' + {{ letter_data['creator'] }} + '" >{{ letter_data['content'] }} </p>')
-                </script>
-            {% endfor %}
-
-        </div>
 
     </body>
 </html>
