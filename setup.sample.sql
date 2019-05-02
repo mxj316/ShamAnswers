@@ -15,8 +15,7 @@ create table user(
     id int not null auto_increment primary key,
     username varchar(255) not null,
     email varchar(255) not null,
-    password varchar(255) not null,
-    admin boolean not null
+    password varchar(255) not null
 );
 create table question(
     id int not null auto_increment primary key,
