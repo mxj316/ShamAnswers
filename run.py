@@ -222,7 +222,7 @@ def post(question):
     letter_data = sql_query(sql, *query_params)
     if request.method == 'POST':
         sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
-        query_params = [(request.form['text'], session['id'], question, request.form.keys()[1])]
+        query_params = [(request.form['text'], session['id'], question, list(request.form.keys())[1])]
         sql_execute(sql, *query_params)
         return redirect(url_for('post', question = question))
     letter_dicts = []
