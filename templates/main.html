@@ -28,11 +28,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="profile">My Profile</a>
                         </li>
-                            {% if authorized %}
                                 <li class="nav-item">
-                                <a class="nav-link" href="admin">Admin</a>
+                                <a class="nav-link" href="admin">Statistics</a>
                                 </li>
-                            {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="logout">Logout</a>
                         </li>
@@ -100,9 +98,8 @@
                             var qString = {{ question['number'] }};
                             var pString = "";
                             pString += "post/" + qString;
-                            function loaded(){
-                                document.getElementById("post_page").innerHTML = pString;
-                            }
+                                document.getElementById("button").href = pString;
+
                         </script>
                         <tr>
                             <td>{{ question['category'] }}</td>
@@ -110,9 +107,7 @@
                             <td>{{ question['author'] }}</td>
                             <td>
                                 <form action="">
-                                    <body onload = loaded()>
-                                    <a class="btn btn-secondary"  href="post_page" role="button">Answer</a>
-                                    </body>
+                                    <a class="btn btn-secondary"  id="button" href="post/" role="button">Answer</a>
                                 </form>
                                 </td>
                             </tr>
