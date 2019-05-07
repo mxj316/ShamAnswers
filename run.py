@@ -88,8 +88,9 @@ def createaccount():
             sql = "insert into user(username, email, password) values(%s, %s, %s)"
             query_params = [(session['username'], session['email'], password)]
             sql_execute(sql, *query_params)
-            sql = "select last_insert_id()"
-            user_id = sql_query(sql, [])
+            sql = "select u.id from user u where u.username = %s"
+            query_params = [(session['username'],)]
+            user_id = sql_query(sql, *query_params)
             session['id'] = user_id[0][0]
             return redirect(url_for('main'))
         else:
