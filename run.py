@@ -244,7 +244,7 @@ def post(question):
             if letter["creator"] == session["id"]:
                 user_submitted = False
         if user_submitted:
-            if request.form.keys()[1] == "None":
+            if list(request.form.keys()[1]) == "None":
                 sql = "insert into letter(alphabet_letter, user_id, question_id, sub_letter_id) values(%s, %s, %s, %s)"
                 query_params = [(request.form['text'], session['id'], question, None)]
                 sql_execute(sql, *query_params)
